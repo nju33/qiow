@@ -1,13 +1,18 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view :themes="themes"></router-view>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'qiow'
+import themes from '@/themes';
+
+export default {
+  name: 'qiow',
+  date() {
+    return {themes};
   }
+}
 </script>
 
 <style>
