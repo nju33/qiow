@@ -44,6 +44,7 @@ export default {
     // }
   },
   mounted() {
+    console.log(this.state$);
     this.$observables.msg.subscribe(msg => console.log(msg))
     // this.$observables.street.subscribe(s => console.log(s))
   }

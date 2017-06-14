@@ -3,13 +3,17 @@
     <section class="box">
       <div>
         <span class="user">{{item.user.id}}</span>
-        <em class="title" style="color:#005CAF">{{item.title}}</em>
+        <em
+          class="title"
+          style="color:#005CAF"
+          v-stream:click="showDetail$"><a>{{item.title}}</a></em>
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import Rx from 'rxjs/Rx';
 export default {
   props: {
     item: {
@@ -17,8 +21,35 @@ export default {
       required: true
     }
   },
+  // data() {
+  //   return {
+  //     showDetailSubscription: this.state$.subscribe(a => console.log(a))
+  //   };
+  // },
+  domStreams: ['showDetail$'],
+  subscriptions() {
+    console.log(9); // this.showDetail$ = new Rx.Subject();
+    // const a = (ew Rx.Subject()).map(() => {route: 'detail'});
+
+    this.showDetail$
+      .map(() => ({
+        type: this.showDetail$,
+        fn: state => Object.assign({}, state, {route: 'detail'})
+      }))
+      // .subscribe(this.state$);
+
+    return {
+    };
+  },
   mounted() {
-    console.log(this.item);
+    this.showDetail$
+      .map(() => ({
+        type: this.showDetail$,
+        fn: state => Object.assign({}, state, {route: 'detail'})
+      }))
+      .subscribe(this.state$);
+    // this.state$.subscribe(a => console.log(a))
+    // console.log(this.showDetail$);
   }
 }
 </script>

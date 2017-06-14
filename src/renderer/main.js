@@ -11,10 +11,24 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 Vue.http = Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 
+Vue.prototype.state$ = new Rx.Subject()
+  .scan((state, {fn}) => {
+    return fn(state);
+  }, {
+    route: 'list'
+  })
+  .share();
+Vue.prototype.state$.subscribe(
+  state => {
+    console.log('Next: ', state);
+    Vue.prototype.$store = state;
+  }
+);
+
 Vue.use(VueRx, Rx);
 new Vue({
   components: {App},
   router,
-  store,
+  // store,
   template: '<App/>'
 }).$mount('#app');
