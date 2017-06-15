@@ -6,7 +6,10 @@
         <em
           class="title"
           style="color:#005CAF"
-          v-stream:click="showDetail$"><a>{{item.title}}</a></em>
+          v-stream:click="{
+            subject: showDetail$,
+            data: item
+          }"><a>{{item.title}}</a></em>
       </div>
     </section>
   </div>
@@ -32,22 +35,29 @@ export default {
     // const a = (ew Rx.Subject()).map(() => {route: 'detail'});
 
     this.showDetail$
-      .map(() => ({
+      .pluck('data')
+      .map(data => ({
         type: this.showDetail$,
-        fn: state => Object.assign({}, state, {route: 'detail'})
+        fn: state => {
+          console.log(1231231);
+          return Object.assign({}, state, {
+            route: 'detail',
+            detail: data
+          });
+        }
       }))
-      // .subscribe(this.state$);
+      .subscribe(this.state$);
 
     return {
     };
   },
   mounted() {
-    this.showDetail$
-      .map(() => ({
-        type: this.showDetail$,
-        fn: state => Object.assign({}, state, {route: 'detail'})
-      }))
-      .subscribe(this.state$);
+    // this.showDetail$
+    //   .map(() => ({
+    //     type: this.showDetail$,
+    //     fn: state => Object.assign({}, state, {route: 'detail'})
+    //   }))
+    //   .subscribe(this.state$);
     // this.state$.subscribe(a => console.log(a))
     // console.log(this.showDetail$);
   }

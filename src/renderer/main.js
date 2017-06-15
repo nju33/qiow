@@ -13,6 +13,7 @@ Vue.config.productionTip = false;
 
 Vue.prototype.state$ = new Rx.Subject()
   .scan((state, {fn}) => {
+    console.log(fn);
     return fn(state);
   }, {
     route: 'list'
