@@ -1,7 +1,9 @@
 <template lang="html">
-  <div class="box" v-if="isDetail">
-    <ModalMenu :close$="close$"/>
-    <div v-html="contents"></div>
+  <div v-if="isDetail" class="modal__outer-box" v-stream:click="close$">
+    <div class="modal__box">
+      <ModalMenu :close$="close$"/>
+      <QiitaContents :title="title" :contents="contents"/>
+    </div>
   </div>
 </template>
 
@@ -13,17 +15,20 @@ import ModalMenu from './modal-menu';
 export default {
   name: 'modal',
   components: {
-    ModalMenu
+    ModalMenu,
+    QiitaContents
   },
   data() {
     return {
       isDetail: false,
+      title: null,
       contetns: null
     }
   },
   subscriptions() {
     this.state$.subscribe(({route, detail}) => {
       this.isDetail = route === 'detail'
+      this.title = detail.title;
       this.contents = detail.rendered_body;
     });
 
@@ -40,12 +45,23 @@ export default {
 </script>
 
 <style scoped>
-  .box {
-    position: fixed;
-    left: 0;
-    top: 5vh;
-    height: 95vh;
-    width: 100vw;
-    background: #fff;
-  }
+.modal__outer-box {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,.6);
+}
+.modal__box {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  top: 5vh;
+  height: 95vh;
+  width: 100vw;
+  background: #fff;
+}
 </style>

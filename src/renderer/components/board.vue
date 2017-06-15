@@ -1,12 +1,16 @@
 <template>
   <div class="box">
-    <Street v-for="tagId in followingTagIds" :tagId="tagId" :key="tagId"/>
+    <template v-for="tagId in followingTagIds">
+      <Street :tagId="tagId" :key="tagId"/>
+      <Separator v-if="idx !== 0"/>
+    </template>
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
 import Street from './street';
+import Separator from './separator';
 
 export default {
   props: {
@@ -14,7 +18,8 @@ export default {
   },
   name: 'board',
   components: {
-    Street
+    Street,
+    Separator
   },
   data() {
     return {
