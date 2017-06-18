@@ -6,25 +6,29 @@ import axios from 'axios';
 import App from './App';
 import router from './router';
 import store from './store';
+import themes from './themes';
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
-Vue.http = Vue.prototype.$http = axios;
+const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
+const http = axios.create({
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+})
+Vue.http = Vue.prototype.$http = http;
 Vue.config.productionTip = false;
 
-Vue.prototype.state$ = new Rx.Subject()
-  .scan((state, {fn}) => {
-    console.log(fn);
+const storeSubject$ = new Rx.Subject()
+  .scan(function (state, {fn}) {
     return fn(state);
-  }, {
-    route: 'list'
-  })
-  .share();
-Vue.prototype.state$.subscribe(
-  state => {
-    console.log('Next: ', state);
-    Vue.prototype.$store = state;
-  }
-);
+  }, null);
+Vue.prototype.state$ = storeSubject$.share();
+
+
+Vue.prototype.$theme = (() => {
+  const {classes} = themes.light.attach();
+  return classes;
+})();
 
 Vue.use(VueRx, Rx);
 new Vue({

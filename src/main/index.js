@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron'
+import {app, BrowserWindow, ipcMain} from 'electron';
+import {transformContents} from './helpers';
 
 /**
  * Set `__static` path to static files in production
@@ -63,3 +64,8 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+ipcMain.on('transformCodeBlock:req', ({sender}, contents) => {
+  const transformed = transformContents(contents);
+  sender.send('transformCodeBlock:res', transformed);
+})

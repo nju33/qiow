@@ -31,7 +31,7 @@ export default {
   // },
   domStreams: ['showDetail$'],
   subscriptions() {
-    console.log(9); // this.showDetail$ = new Rx.Subject();
+    // console.log(9); // this.showDetail$ = new Rx.Subject();
     // const a = (ew Rx.Subject()).map(() => {route: 'detail'});
 
     this.showDetail$
@@ -39,7 +39,7 @@ export default {
       .map(data => ({
         type: this.showDetail$,
         fn: state => {
-          console.log(1231231);
+          // console.log(1231231);
           return Object.assign({}, state, {
             route: 'detail',
             detail: data
@@ -52,6 +52,7 @@ export default {
     };
   },
   mounted() {
+    // console.log(this.item);
     // this.showDetail$
     //   .map(() => ({
     //     type: this.showDetail$,

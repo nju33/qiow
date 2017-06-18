@@ -4,7 +4,7 @@
       <h3 class="tag-id">{{tagId}}</h3>
     </header>
     <ul class="list">
-      <li v-for="(item, idx) in items" class="item">
+      <li v-for="item in items" class="item">
         <Card :item="item"/>
       </li>
     </ul>
@@ -13,6 +13,7 @@
 
 <script>
 import Rx from 'rxjs/Rx';
+import _ from 'lodash';
 import Card from './card';
 
 export default {
@@ -23,23 +24,41 @@ export default {
     tagId: {
       type: String,
       required: true
-    },
-    key: {
-      type: String,
-      required: true
     }
   },
   subscriptions() {
-    const url = `https://qiita.com/api/v2/tags/${this.tagId}/items`;
-    return {
-      items: Rx.Observable.fromPromise(this.$http(url))
+    const {tagId} = this;
+
+    const source$ = Rx.Observable.create(observer => {
+      const url = `https://qiita.com/api/v2/tags/${tagId}/items`;
+      Rx.Observable.fromPromise(this.$http(url))
         .pluck('data')
+        .do(data => console.log('get', tagId, data))
+        .map(items => ({
+          items,
+          fn(state) {
+            const newState = Object.assign({}, state);
+            const idx = newState.streets.findIndex(s => s.tagId === tagId);
+            if (idx > -1) {
+              const target = newState.streets[idx];
+              target.items = _.uniqBy(target.items.concat(items), item => {
+                return item.id;
+              });
+            }
+            return newState;
+          }
+        }))
+        .subscribe(({items, fn}) => {
+          observer.next(items);
+          this.state$.next({fn});
+        });
+    });
+
+    return {
+      items: source$
     };
   },
   mounted() {
-    this.$observables.items.subscribe(
-      items => console.log(items)
-    );
   }
 }
 </script>

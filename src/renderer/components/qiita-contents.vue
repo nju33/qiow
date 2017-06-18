@@ -1,14 +1,20 @@
 <template>
   <div class="qiita-contents__box">
-    <section class="qiita-contents__center">
-      <h1 class="qiita-contents__title" v-text="title"/>
-      <div ref="contents" id="qC" v-html="contents"/>
+      <section class="qiita-contents__center">
+      <h1
+        class="qiita-contents__title"
+        :class="{[$theme.title]: true}"
+        v-text="title"
+      />
+      <div ref="contents" id="qC" v-html="transformedContents"/>
     </section>
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
+import hljs from 'highlightjs';
+import 'highlightjs/styles/atom-one-dark.css';
 
 export default {
   name: 'qiita-contents',
@@ -24,10 +30,37 @@ export default {
   },
   data() {
     return {
-      _disposables: []
+      _disposables: [],
+      transformedContents: null
     }
   },
+  // beforeCreate() {
+  // },
   mounted() {
+    this.$electron.ipcRenderer.send('transformCodeBlock:req', this.contents);
+    this.$electron.ipcRenderer.on('transformCodeBlock:res', (ev, contents) => {
+    // this.$electron.ipcRenderer.on('transformCodeBlock:res', function () {
+      // console.log(arguments);
+      this.transformedContents = contents;
+    });
+    // (() => {
+    //   const codeBlocks = this.$refs.contents.querySelectorAll('.code-frame');
+    //   if (codeBlocks.length === 0) {
+    //     return;
+    //   }
+    //
+    //   Array.from(codeBlocks).forEach(block => {
+    //     const {lang} = block.dataset;
+    //     const pre = block.querySelector('pre');
+    //     if (pre === null) {
+    //       return;
+    //     }
+    //     try {
+    //       hljs.highlight(lang, pre.innerText).value;
+    //     } catch (_) {}
+    //   });
+    // })();
+
     const addEventListenerForA = (() => {
       const openLink$ = new Rx.Subject()
       const source$ = openLink$
@@ -72,10 +105,12 @@ export default {
   font-size: 1.1em;
 }
 .qiita-contents__center {
-  width: 34em;
+  width: 37em;
   margin: 0 auto;
 }
 .qiita-contents__title {
+  font-size: 2.1em;
+  font-weight: normal;
   padding: 0 .75rem;
 }
 </style>
@@ -92,15 +127,35 @@ export default {
 #qC pre {
   margin: 0;
 }
+#qC h1 {
+  font-size: 1.95em;
+  border-bottom: 1px solid;
+}
+#qC h2 {
+  font-size: 1.75em;
+}
+#qC h3 {
+  font-size: 1.3em;
+  font-weight: normal;
+}
+#qC h4 {
+  font-size: 1.15em;
+}
+#qC h5 {
+  font-size: 1.05em;
+}
+#qC h6 {
+  font-size: .9em;
+}
 #qC .code-frame {
   position: relative;
   box-sizing: border-box;
-  background: #333;
-  color: #f8f8f8;
+  /*background: #333;*/
+  /*color: #f8f8f8;*/
   padding-top: .5rem;
   padding-bottom: .5rem;
-  margin-left: -3em;
-  width: 40em;
+  /*margin-left: -3em;*/
+  /*width: 40em;*/
 }
 #qC .code-lang {
   position: absolute;

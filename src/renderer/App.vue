@@ -1,12 +1,11 @@
 <template>
   <div id="app">
-    <router-view :themes="themes"></router-view>
+    <router-view></router-view>
     <Modal/>
   </div>
 </template>
 
 <script>
-import themes from '@/themes';
 import Modal from '@/components/modal';
 
 export default {
