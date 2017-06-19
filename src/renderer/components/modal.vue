@@ -34,7 +34,7 @@ export default {
         return;
       }
       this.title = detail.title;
-      this.contents = detail.rendered_body;
+      this.contents = detail.renderedBody;
     });
 
     this.close$ = new Rx.Subject()

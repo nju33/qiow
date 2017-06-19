@@ -45,6 +45,18 @@ export default jss.createStyleSheet({
   title: {
     color: vars.color.accent
   },
+  userBoard: {
+    background: 'linear-gradient(-45deg, #dcdcdc, #cfcfcf)',
+    borderRight: '1px solid #cfcfcf'
+  },
+  userBoardImg: {
+    background: vars.color.base,
+    border: `2px solid ${vars.color.accent}`
+  },
+  userBoardName: {
+    background: vars.color.base,
+    color: vars.color.sub
+  },
   streetPlusBox: {
     background: vars.color.accent
   },

@@ -14,6 +14,7 @@
 <script>
 import Rx from 'rxjs/Rx';
 import _ from 'lodash';
+import camelcaseKeys from 'camelcase-keys';
 import Card from './card';
 
 export default {
@@ -34,6 +35,7 @@ export default {
       Rx.Observable.fromPromise(this.$http(url))
         .pluck('data')
         .do(data => console.log('get', tagId, data))
+        .map(items => items.map(item => camelcaseKeys(item)))
         .map(items => ({
           items,
           fn(state) {
