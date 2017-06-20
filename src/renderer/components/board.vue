@@ -1,6 +1,6 @@
 <template>
   <div id="root" class="box">
-    <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/>
+    <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
     <template v-for="tagId in followingTagIds">
       <Street :tagId="tagId" :key="tagId"/>
       <Separator/>

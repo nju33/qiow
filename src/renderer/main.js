@@ -55,6 +55,7 @@ Vue.prototype.state$.next({
 
 init(Vue);
 
+Vue.prototype.$themename = 'light';
 Vue.prototype.$theme = (() => {
   const {classes} = themes.light.attach();
   return classes;
