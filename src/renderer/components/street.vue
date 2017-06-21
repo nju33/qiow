@@ -13,7 +13,10 @@
         stroke: '#2bc483'
       }"
     >
-      <ul class="list">
+      <ul
+        class="list"
+        v-stream:scroll="scroll$"
+      >
         <li v-for="item in items" class="item">
           <Card :item="item"/>
         </li>
@@ -79,16 +82,11 @@ export default {
     //     }));
     // }
   },
+  domStreams: ['scroll$'],
   subscriptions() {
     const {tagId} = this;
     const url = `https://qiita.com/api/v2/tags/${tagId}/items`;
-    // const source$ = Rx.Observable.create(observer => {
-    //   this.createItemsSource()
-    //     .subscribe(({items, fn}) => {
-    //       observer.next(items);
-    //       this.state$.next({fn});
-    //     });
-    // });
+
     this.getItems$ = new Rx.Subject()
       .flatMap(({type}) => {
         return Rx.Observable.forkJoin(
@@ -127,6 +125,14 @@ export default {
       this.getItems$.next({type: 'INIT'});
     });
 
+    this.scroll$
+      .throttleTime(150)
+      .map(({event}) => {
+        return event.currentTarget.scrollTop;
+      })
+      .pairwise()
+      .subscribe(x => console.log(x));
+
     return {
       items: source$
     };
@@ -147,6 +153,10 @@ export default {
   }
   .tag-id {
     text-align: center;
+  }
+  .prdiv-box {
+    display: flex;
+    overflow: hidden;
   }
   .list {
     display: block;
