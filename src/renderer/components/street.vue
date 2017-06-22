@@ -82,13 +82,20 @@ export default {
     //     }));
     // }
   },
+  data() {
+    return {
+      page: 1
+    }
+  },
   domStreams: ['scroll$'],
   subscriptions() {
     const {tagId} = this;
-    const url = `https://qiita.com/api/v2/tags/${tagId}/items`;
 
     this.getItems$ = new Rx.Subject()
-      .flatMap(({type}) => {
+      .do(() => console.log('Called: getItems$'))
+      .switchMap(({type}) => {
+        const query = `?page=${this.page}`
+        const url = `https://qiita.com/api/v2/tags/${tagId}/items${query}`;
         return Rx.Observable.forkJoin(
           Rx.Observable.of(type),
           Rx.Observable
@@ -98,29 +105,55 @@ export default {
            .map(items => items.map(item => camelcaseKeys(item)))
         )
       })
-      .map(([type, items]) => ({
-        type,
-        items,
-        fn(state) {
-          const newState = Object.assign({}, state);
-          const idx = newState.streets.findIndex(s => s.tagId === tagId);
-          if (idx > -1) {
-            const target = newState.streets[idx];
-            target.items = _.uniqBy(target.items.concat(items), item => {
-              return item.id;
-            });
+      .do(() => this.page++)
+      .map(([type, items]) => {
+        return {
+          type,
+          items: items,
+          fn(state) {
+            const nextState = Object.assign({}, state);
+            const idx = nextState.streets.findIndex(s => s.tagId === tagId);
+            if (idx === -1) {
+              return nextState;
+            }
+
+            const target = nextState.streets[idx];
+
+            switch (type) {
+              case 'INIT': {
+                const nextItems = _.uniqBy(target.items.concat(items), item => {
+                  return item.id;
+                });
+                target.items = nextItems;
+              }
+              case 'NEXT': {
+                const nextItems = _.uniqBy(target.items.concat(items), item => {
+                  return item.id;
+                });
+                target.items = nextItems;
+              }
+              default: {
+                console.warning(type);
+              }
+            }
+
+            return nextState;
           }
-          return newState;
         }
-      }));
+      });
 
     const source$ = Rx.Observable.create(observer => {
       this.getItems$
-        .subscribe(({type, items, fn}) => {
-          if (type === 'INIT') {
-            observer.next(items);
-            this.state$.next({fn});
+        .scan((oldData, data) => {
+          return {
+            ...data,
+            items: [...oldData.items, ...data.items]
           }
+        }, {items: []})
+        .subscribe(({type, items, fn}) => {
+          console.log(items);
+          observer.next(items);
+          this.state$.next({fn});
         });
       this.getItems$.next({type: 'INIT'});
     });
@@ -128,10 +161,31 @@ export default {
     this.scroll$
       .throttleTime(150)
       .map(({event}) => {
-        return event.currentTarget.scrollTop;
+        const {scrollHeight, scrollTop, clientHeight} = event.currentTarget;
+        return {
+          height: scrollHeight - clientHeight,
+          top: scrollTop
+        };
       })
       .pairwise()
-      .subscribe(x => console.log(x));
+      .map(([oldScroll, newScroll]) => {
+        if (oldScroll.top >= newScroll.top) {
+          return false;
+        }
+
+        const isAlmostBottom = (() => {
+          const height = newScroll.height;
+          return newScroll.top / height > 0.7;
+        })();
+        return isAlmostBottom;
+      })
+      .switchMap(bool => {
+        if (bool) {
+          this.getItems$.next({type: 'NEXT'});
+        }
+        return Rx.Observable.never();
+      })
+      .subscribe();
 
     return {
       items: source$
