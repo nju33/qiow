@@ -39,7 +39,7 @@ export default {
       .map(data => ({
         type: this.showDetail$,
         fn: state => {
-          // console.log(1231231);
+          console.log(data);
           return Object.assign({}, state, {
             route: 'detail',
             detail: data

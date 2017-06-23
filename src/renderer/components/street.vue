@@ -20,7 +20,11 @@
         <li v-for="item in items" class="item">
           <Card :item="item"/>
         </li>
+        <li>
+          <Loading :loading="loading"/>
+        </li>
       </ul>
+
     </Prdiv>
   </section>
 </template>
@@ -31,11 +35,13 @@ import _ from 'lodash';
 import camelcaseKeys from 'camelcase-keys';
 import Prdiv from 'vue-prdiv/components/Prdiv';
 import Card from './card';
+import Loading from './loading';
 
 export default {
   components: {
     Prdiv,
-    Card
+    Card,
+    Loading
   },
   props: {
     tagId: {
@@ -84,24 +90,25 @@ export default {
   },
   data() {
     return {
-      page: 1
+      page: 1,
+      loading: false
     }
   },
   domStreams: ['scroll$'],
   subscriptions() {
-    const {tagId} = this;
+    const self = this;
 
     this.getItems$ = new Rx.Subject()
       .do(() => console.log('Called: getItems$'))
       .switchMap(({type}) => {
         const query = `?page=${this.page}`
-        const url = `https://qiita.com/api/v2/tags/${tagId}/items${query}`;
+        const url = `https://qiita.com/api/v2/tags/${self.tagId}/items${query}`;
         return Rx.Observable.forkJoin(
           Rx.Observable.of(type),
           Rx.Observable
            .fromPromise(this.$http(url))
            .pluck('data')
-           .do(data => console.log('get', tagId, data))
+           .do(data => console.log('get', self.tagId, data))
            .map(items => items.map(item => camelcaseKeys(item)))
         )
       })
@@ -112,7 +119,9 @@ export default {
           items: items,
           fn(state) {
             const nextState = Object.assign({}, state);
-            const idx = nextState.streets.findIndex(s => s.tagId === tagId);
+            const idx = nextState.streets.findIndex(s => {
+              return s.tagId === self.tagId;
+            });
             if (idx === -1) {
               return nextState;
             }
@@ -133,14 +142,17 @@ export default {
                 target.items = nextItems;
               }
               default: {
-                console.warning(type);
+                console.log(`Do not expect type: ${type}`);
               }
             }
 
+            self.loading = false;
             return nextState;
           }
         }
-      });
+      })
+      .do(() => console.log(123123))
+      .do(() => self.loading = false);
 
     const source$ = Rx.Observable.create(observer => {
       this.getItems$
@@ -175,12 +187,13 @@ export default {
 
         const isAlmostBottom = (() => {
           const height = newScroll.height;
-          return newScroll.top / height > 0.7;
+          return newScroll.top / height > 0.85;
         })();
         return isAlmostBottom;
       })
       .switchMap(bool => {
         if (bool) {
+          self.loading = true;
           this.getItems$.next({type: 'NEXT'});
         }
         return Rx.Observable.never();
@@ -209,7 +222,9 @@ export default {
     text-align: center;
   }
   .prdiv-box {
+    position: relative;
     display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
   .list {
