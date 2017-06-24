@@ -1,15 +1,24 @@
 <template>
   <div>
-    <section class="box">
-      <div>
-        <span class="user">{{item.user.id}}</span>
-        <em
+    <section class="card__box" :class="$theme.card">
+      <div class="card__title">
+        <a
           class="title"
           style="color:#005CAF"
           v-stream:click="{
             subject: showDetail$,
             data: item
-          }"><a>{{item.title}}</a></em>
+          }"
+        >{{item.title}}</a>
+      </div>
+      <div class="card__data">
+        <div class="card__user">
+          <img class="user__img" v-lazy="item.user.profileImageUrl"/>
+          <span class="user__name">{{item.user.id}}</span>
+        </div>
+        <div class="card__date">
+          <span class="date__time">{{item.createdAt | timeago}}</span>
+        </div>
       </div>
     </section>
   </div>
@@ -17,7 +26,10 @@
 
 <script>
 import Rx from 'rxjs/Rx';
+import timeago from 'timeago.js';
+
 export default {
+  name: 'card',
   props: {
     item: {
       type: Object,
@@ -51,6 +63,11 @@ export default {
     return {
     };
   },
+  filters: {
+    timeago(date) {
+      return timeago().format(date);
+    }
+  },
   mounted() {
     // console.log(this.item);
     // this.showDetail$
@@ -66,14 +83,36 @@ export default {
 </script>
 
 <style scoped>
-  .box {
-    padding: .5em 1em;
-    /*box-sizing: border-box;
-    border: solid #ccc;
-    border-width: 0 1px;*/
+  .card__box {
+    display: grid;
+    grid-template-rows: 1fr 1.75em;
+    grid-template-columns: 1fr;
+    padding: .5em .75em;
+    margin: .25em .5em;
   }
-  .user:after {
-    content: '/';
-    margin: 0 .25em;
+  .card__title {
+    font-size: 1.2em;
+    margin-bottom: .5em;
+  }
+  .card__data {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  .card__user,
+  .card__date {
+    display: flex;
+    align-items: center;
+  }
+  .date__time {
+    width: 100%;
+    text-align: right;
+  }
+  .user__img {
+    height: 1.5em;
+    width: 1.5em;
+  }
+  .user__name {
+    margin-left: .5em;
   }
 </style>

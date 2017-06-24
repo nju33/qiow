@@ -67,5 +67,16 @@ export default jss.createStyleSheet({
   },
   accentButton: {
     color: vars.color.accent
+  },
+  card: {
+    border: '1px solid #dcdcdc',
+    background: '#fefefe',
+
+    '& .card__data': {
+      color: 'rgba(0,0,0,.7)'
+    }
+  },
+  loadingIcon: {
+    fill: vars.color.accent
   }
 });

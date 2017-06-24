@@ -18,7 +18,7 @@ export default (Vue) => {
     .subscribe(([config, user]) => {
       Vue.prototype.state$.next({
         fn(state) {
-          return Object.assign({}, state, {config, user});
+          return state.merge({config, user});
         }
       });
     });

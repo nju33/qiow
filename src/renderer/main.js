@@ -1,11 +1,15 @@
 import Vue from 'vue';
+import VueLazyload from 'vue-lazyload';
+import {List} from 'immutable';
 import Rx from 'rxjs/Rx';
 import VueRx from 'vue-rx';
 import axios from 'axios';
-
 import App from './App';
 import router from './router';
 import store from './store';
+import storage from './storage';
+import State from './records/state';
+import Street from './records/street';
 import themes from './themes';
 import init from './init';
 
@@ -22,7 +26,15 @@ Vue.config.productionTip = false;
 const storeSubject$ = new Rx.ReplaySubject(1)
   .scan(function (state, {fn}) {
     return fn(state);
-  }, null);
+  }, null)
+  .pairwise()
+  .switchMap(([prevState, state]) => {
+    console.log(prevState === state);
+    if (prevState === state) {
+      return Rx.Observable.never();
+    }
+    return Rx.Observable.of(state);
+  });
 Vue.prototype.state$ = storeSubject$.share();
 
 
@@ -35,21 +47,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 Vue.prototype.state$.next({
-  fn(state) {
-    return {
-      streets: [
-        {
-          tagId: 'nodejs',
-          items: []
-        },
-        {
-          tagId: 'javascript',
-          items: []
-        },
-      ],
-      detail: null,
-      route: 'list'
-    };
+  fn() {
+    return new State({
+      streets: new List([
+        new Street({tagId: 'nodejs'}),
+        new Street({tagId: 'javascript'})
+      ])
+    });
   }
 });
 
@@ -62,6 +66,7 @@ Vue.prototype.$theme = (() => {
 })();
 
 Vue.use(VueRx, Rx);
+Vue.use(VueLazyload);
 new Vue({
   components: {App},
   router,

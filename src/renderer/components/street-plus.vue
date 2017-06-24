@@ -77,6 +77,7 @@ export default {
     this.addStreet$ = new Rx.BehaviorSubject({data: {type: 'button'}});
 
     this.submit$
+      .do(({event}) => event.preventDefault())
       .flatMap(() => {
         return Rx.Observable
           .from(Object.values(this.formData))

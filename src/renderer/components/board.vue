@@ -34,6 +34,7 @@ export default {
       followingTagIds: this.state$
         .pluck('streets')
         .map(streets => streets.map(street => street.tagId))
+        .map(idList => idList.toArray())
     }
   },
   methods: {
@@ -45,7 +46,7 @@ export default {
 
 <style>
   body {
-    font: 12.5px / 1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+    font: 12.5px / 1.5 "Noto Sans Japanese", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
     margin: 0;
     max-height: 100vh;
     overflow: hidden;
