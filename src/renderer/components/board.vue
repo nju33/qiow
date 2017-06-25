@@ -1,11 +1,12 @@
 <template>
   <div id="root" class="box">
+    <StreetPlus/>
+    <Separator/>
     <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
     <template v-for="tagId in followingTagIds">
       <Street :tagId="tagId" :key="tagId"/>
       <Separator/>
     </template>
-    <StreetPlus/>
   </div>
 </template>
 
@@ -43,34 +44,6 @@ export default {
   }
 }
 </script>
-
-<style>
-  body {
-    font: 12.5px / 1.5 "Noto Sans Japanese", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
-    margin: 0;
-    max-height: 100vh;
-    overflow: hidden;
-  }
-  h3 {
-    margin: 0;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  input,
-  textarea,
-  button {
-    box-sizing: border-box;
-    font-size: inherit;
-    outline: none;
-  }
-</style>
 
 <style scoped>
   .box {

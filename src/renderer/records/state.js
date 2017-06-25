@@ -22,6 +22,12 @@ export default class State extends Record({
     return this.streets.findKey(Street.findByTagId(tagId));
   }
 
+  setDetail(data) {
+    return this
+      .set('route', 'detail')
+      .set('detail', data);
+  }
+
   addStreet(street) {
     if (!(street instanceof Street)) {
       throw new Error(`Not a value of Street: ${street}`);

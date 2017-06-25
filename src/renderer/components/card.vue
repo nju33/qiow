@@ -45,27 +45,14 @@ export default {
       required: true
     }
   },
-  // data() {
-  //   return {
-  //     showDetailSubscription: this.state$.subscribe(a => console.log(a))
-  //   };
-  // },
   domStreams: ['showDetail$'],
   subscriptions() {
-    // console.log(9); // this.showDetail$ = new Rx.Subject();
-    // const a = (ew Rx.Subject()).map(() => {route: 'detail'});
-
     this.showDetail$
       .pluck('data')
+      .do(data => console.log(`Detail: ${data}`))
       .map(data => ({
         type: this.showDetail$,
-        fn: state => {
-          console.log(data);
-          return Object.assign({}, state, {
-            route: 'detail',
-            detail: data
-          });
-        }
+        fn: state => state.setDetail(data)
       }))
       .subscribe(this.state$);
 
@@ -78,16 +65,6 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.item);
-    console.log(this);
-    // this.showDetail$
-    //   .map(() => ({
-    //     type: this.showDetail$,
-    //     fn: state => Object.assign({}, state, {route: 'detail'})
-    //   }))
-    //   .subscribe(this.state$);
-    // this.state$.subscribe(a => console.log(a))
-    // console.log(this.showDetail$);
   }
 }
 </script>

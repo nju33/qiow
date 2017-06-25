@@ -32,24 +32,34 @@ export default {
       type: Object
     }
   },
+  data() {
+    return {
+      tip: null
+    }
+  },
   mounted() {
-    // console.log(this);
-    tippy(this.$parent.$refs.tooltip, {
+    this.tip = tippy(this.$parent.$refs.tooltip, {
       html: this.$refs.tooltip,
       arrow: true,
-      animation: 'fade'
+      animation: 'fade',
+      theme: 'light',
+      size: 'small',
+      interactive: true
     });
+    // スタイル調整用
+    // this.tip.show(this.tip.getPopperElement(this.$parent.$refs.tooltip));
+  },
+  beforeDestroy() {
+    this.tip.destroyAll();
   }
-
 }
 </script>
 
 <style scoped>
 .tooltip__box {
   display: grid;
-  grid-template-rows: 8em 2.5em 1fr;
-  width: 13em;
-  background: #fff;
+  grid-template-rows: 8em 2.1em 1fr;
+  width: 12em;
 }
 
 .tooltip__row--img {
@@ -69,8 +79,8 @@ export default {
 .tooltip__description {
   word-wrap: break-word;
   word-break: break-all;
-  font-size: .9em;
-  padding: .5em 1em;
+  font-size: .85em;
+  padding: .25em .75em;
   text-align: justify;
 }
 

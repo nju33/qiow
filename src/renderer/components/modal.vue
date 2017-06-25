@@ -40,9 +40,7 @@ export default {
     this.close$ = new Rx.Subject()
       .map(() => ({
         type: this.close$,
-        fn(state) {
-          return Object.assign({}, state, {route: 'list'})
-        }
+        fn: state => state.goList()
       }));
     this.close$.subscribe(this.state$);
   }
