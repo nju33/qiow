@@ -1,5 +1,5 @@
 import {Record, List} from 'immutable';
-import {uniqById} from '@/helpers';
+import {uniqById} from '../helpers';
 
 export default class Street extends Record({
   tagId: null,
@@ -22,17 +22,21 @@ export default class Street extends Record({
     return false;
   }
 
+  _uniqById(list) {
+    const arr = list.toArray();
+    const uniqedArr = uniqById(arr);
+    return List(uniqedArr);
+  }
+
   addItemsIntoHead(items) {
-    const nextItems = List(items)
-      .concat(this.items)
-      .withMutations(uniqById);
+    const concatenated = List(items).concat(this.items);
+    const nextItems = this._uniqById(concatenated);
     return this.set('items', nextItems);
   }
 
   addItems(items) {
-    const nextItems = this.items
-      .concat(List(items))
-      .withMutations(uniqById);
+    const concatenated = this.items.concat(List(items));
+    const nextItems = this._uniqById(concatenated);
     return this.set('items', nextItems);
   }
 }

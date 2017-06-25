@@ -1,5 +1,6 @@
 import pify from 'pify';
 import _storage from 'electron-json-storage';
+import {pickTagId} from './helpers';
 
 const storage = pify(_storage);
 
@@ -10,4 +11,8 @@ export async function getConfig() {
     return {};
   }
   return config;
+}
+
+export async function saveConfig() {
+  
 }

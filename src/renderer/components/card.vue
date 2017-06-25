@@ -13,23 +13,32 @@
       </div>
       <div class="card__data">
         <div class="card__user">
-          <img class="user__img" v-lazy="item.user.profileImageUrl"/>
-          <span class="user__name">{{item.user.id}}</span>
+          <a ref="tooltip" class="user__button">
+            <img class="user__img" v-lazy="item.user.profileImageUrl"/>
+            <span class="user__name">{{item.user.id}}</span>
+          </a>
         </div>
         <div class="card__date">
           <span class="date__time">{{item.createdAt | timeago}}</span>
         </div>
       </div>
     </section>
+    <UserTooltip
+      :user="item.user"
+    />
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
 import timeago from 'timeago.js';
+import UserTooltip from './user-tooltip';
 
 export default {
   name: 'card',
+  components: {
+    UserTooltip
+  },
   props: {
     item: {
       type: Object,
@@ -70,6 +79,7 @@ export default {
   },
   mounted() {
     // console.log(this.item);
+    console.log(this);
     // this.showDetail$
     //   .map(() => ({
     //     type: this.showDetail$,
@@ -100,6 +110,7 @@ export default {
     grid-template-columns: 1fr 1fr;
   }
   .card__user,
+  .user__button,
   .card__date {
     display: flex;
     align-items: center;
@@ -107,6 +118,9 @@ export default {
   .date__time {
     width: 100%;
     text-align: right;
+  }
+  .user__button {
+    cursor: pointer;
   }
   .user__img {
     height: 1.5em;

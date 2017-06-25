@@ -28,6 +28,9 @@
         }],
         "stage-0"
       ]
+    },
+    "test": {
+      "presets": ["env"]
     }
   },
   "plugins": [

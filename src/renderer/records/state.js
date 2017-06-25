@@ -11,13 +11,11 @@ export default class State extends Record({
   ctx: null
 }) {
   goList() {
-    this.set(route, 'list');
-    return this;
+    return this.set('route', 'list');
   }
 
   goDetail() {
-    this.set(route, 'detail');
-    return this;
+    return this.set('route', 'detail');
   }
 
   findStreet(tagId) {
