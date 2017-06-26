@@ -1,10 +1,10 @@
 <template>
   <div id="root" class="box">
     <StreetPlus/>
-    <Separator/>
     <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
-    <template v-for="tagId in followingTagIds">
-      <Street :tagId="tagId" :key="tagId"/>
+    <!-- <template v-for="tagId in followingTagIds"> -->
+    <template v-for="street in streets">
+      <Street :street="street"/>
       <Separator/>
     </template>
   </div>
@@ -34,8 +34,9 @@ export default {
       user: this.state$.pluck('user'),
       followingTagIds: this.state$
         .pluck('streets')
-        .map(streets => streets.map(street => street.tagId))
-        .map(idList => idList.toArray())
+        .map(streets => streets.toArray())
+        // .map(streets => streets.map(street => street.tagId))
+        // .map(idList => idList.toArray())
     }
   },
   methods: {

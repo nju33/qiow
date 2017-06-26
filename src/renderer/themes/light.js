@@ -4,14 +4,25 @@ import preset from 'jss-preset-default';
 const jss = create();
 jss.setup(preset());
 
+/**
+ * easeOutCubic
+ */
+const easing = 'cubic-bezier(0.215, 0.61, 0.355, 1)';
+
+/**
+ * @prop {string} base culturedpearl
+ * @prop {string} sub eerieblack
+ * @prop {string} link denim
+ */
 const vars = {
   color: {
-    base: '#f5f5f5', // culturedpearl
-    sub: '#1b1b1b', // eerieblack
-    link: '#2b6cc4', // denim
-    accent: '#2bc483'
+    base: '#f5f5f5',
+    sub: '#1b1b1b',
+    link: '#2b6cc4',
+    accent: '#2bc483',
+    accentSub: '#229a67'
   }
-}
+};
 
 export default jss.createStyleSheet({
   '@global': {
@@ -58,15 +69,35 @@ export default jss.createStyleSheet({
     color: vars.color.sub
   },
   streetPlusBox: {
-    background: vars.color.accent
+    background: vars.color.accent,
+    borderRight: `1px solid ${vars.color.accentSub}`
   },
   streetPlusIcon: {
     '&&': {
       fill: vars.color.base,
     }
   },
+  input: {
+    borderRadius: '2px',
+    border: '1px solid #dcdcdc',
+    transition: `.2s ${easing}`,
+    '&:focus': {
+      border: `1px solid ${vars.color.accent}`,
+      boxShadow: `0 0 3px 0 ${vars.color.accent}`
+    }
+  },
   accentButton: {
-    color: vars.color.accent
+    borderRadius: '2px',
+    width: '31%',
+    color: vars.color.base,
+    background: vars.color.accent,
+    fontWeight: 'bold',
+    border: 'none',
+    cursor: 'pointer',
+    transition: `.2s ${easing}`,
+    '&:hover': {
+      background: vars.color.accentSub
+    }
   },
   card: {
     border: '1px solid #dcdcdc',

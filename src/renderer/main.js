@@ -50,8 +50,18 @@ Vue.prototype.state$.next({
   fn() {
     return new State({
       streets: new List([
-        new Street({tagId: 'nodejs'}),
-        new Street({tagId: 'javascript'})
+        new Street({
+          type: 'tag',
+          value: 'nodejs'
+        }),
+        new Street({
+          type: 'tag',
+          value: 'javascript'
+        }),
+        new Street({
+          type: 'search',
+          value: 'aws'
+        })
       ])
     });
   }

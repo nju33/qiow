@@ -1,5 +1,8 @@
 <template>
-  <section class="street-plus__box">
+  <section
+    class="street-plus__box"
+    :class="$theme.streetPlusBox"
+  >
     <button ref="tagButton" class="street-plus__button">
       <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
     </button>
@@ -12,7 +15,13 @@
     >
       <form
         class="street-plus__form"
-        v-stream:submit="submit$"
+        v-stream:submit="{
+          subject: submit$,
+          data: {
+            type: 'tag',
+            value: form.tag
+          }
+        }"
       >
         <div class="street-plus__form-group">
           <label
@@ -22,6 +31,7 @@
           >タグID</label>
           <input
             class="street-plus__form-input"
+            :class="$theme.input"
             id="tagId"
             v-model.trim="form.tag"
           />
@@ -29,6 +39,41 @@
         <div class="street-plus__form-group">
           <button
             class="street-plus__form-button"
+            :class="$theme.accentButton"
+            type="submit">追加</button>
+        </div>
+      </form>
+    </section>
+    <section
+      ref="searchForm"
+    >
+      <form
+        class="street-plus__form"
+        v-stream:submit="{
+          subject: submit$,
+          data: {
+            type: 'search',
+            value: form.search
+          }
+        }"
+      >
+        <div class="street-plus__form-group">
+          <label
+            ref="searchInput"
+            class="street-plus__form-label"
+            for="tagId"
+          >検索</label>
+          <input
+            class="street-plus__form-input"
+            :class="$theme.input"
+            id="tagId"
+            v-model.trim="form.search"
+          />
+        </div>
+        <div class="street-plus__form-group">
+          <button
+            class="street-plus__form-button"
+            :class="$theme.accentButton"
             type="submit">追加</button>
         </div>
       </form>
@@ -55,6 +100,7 @@ export default {
     return {
       tagId: '',
       tagTip: null,
+      searchTip: null,
       form: {
         tag: '',
         search: ''
@@ -75,32 +121,33 @@ export default {
 
     this.submit$
       .do(({event}) => event.preventDefault())
-      .flatMap(() => {
-        return Rx.Observable
-          .from(Object.values(this.formData))
-          .every(val => val !== '');
-      })
-      .switchMap(bool => {
-        if (bool) {
-          return Rx.Observable.of(this.formData);
+      .pluck('data')
+      // .flatMap(() => {
+      //   return Rx.Observable
+      //     .from(Object.values(this.formData))
+      //     .every(val => val !== '');
+      // })
+      .switchMap(data => {
+        if (data.value !== '') {
+          return Rx.Observable.of(data);
         }
         return Rx.Observable.never();
       })
-      .subscribe(() => {
-        const {tagId} = this;
+      .subscribe(data => {
+        // const {tagId} = this;
         this.state$.next({
-          fn(state) {
-            const nextState = Object.assign({}, state);
-            nextState.streets.push({
-              tagId,
-              items: []
-            });
-            return nextState;
-          }
-        });
-        setTimeout(() => {
-          this.addStreet$.next({data: {type: 'button'}});
-        }, 0);
+          fn: state => state.addStreet(data)
+            // const nextState = Object.assign({}, state);
+            // nextState.streets.push({
+            //   tagId,
+            //   items: []
+            // });
+            // return nextState;
+        })
+        // });
+        // setTimeout(() => {
+        //   this.addStreet$.next({data: {type: 'button'}});
+        // }, 0);
       });
 
     return {
@@ -112,7 +159,6 @@ export default {
   mounted() {
     this.tagTip = tippy(this.$refs.tagButton, {
       html: this.$refs.tagForm,
-      // arrow: true,
       position: 'top-start',
       animation: 'shift',
       theme: 'light',
@@ -126,9 +172,22 @@ export default {
       },
     });
     this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
-    // this.$observables.items.subscribe(
-    //   items => console.log(items)
-    // );
+
+    this.searchTip = tippy(this.$refs.searchButton, {
+      html: this.$refs.searchForm,
+      position: 'top-start',
+      animation: 'shift',
+      theme: 'light',
+      interactive: true,
+      size: 'small',
+      shown: () => {
+        this.$refs.searchInput.focus();
+      },
+      hidden: () => {
+        this.form.search = '';
+      },
+    });
+    this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
   }
 }
 </script>
@@ -138,13 +197,9 @@ export default {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    /*justify-content: center;*/
     align-items: center;
-    /*min-width: 21em;*/
-    /*max-width: 21em;*/
-    min-width: 5em;
-    max-width: 5em;
-    /*cursor: pointer;*/
+    min-width: 66px;
+    max-width: 66px;
   }
   .street-plus__box:hover .icon svg {
     opacity: .5;
@@ -190,6 +245,7 @@ export default {
   .street-plus__form-label {
     text-align: left;
     margin: 0 0 .34em .55em;
+    font-weight: bold;
   }
   .street-plus__form-input {
     padding: .34em .55em;

@@ -2,7 +2,9 @@ import {Record, List} from 'immutable';
 import {uniqById} from '../helpers';
 
 export default class Street extends Record({
-  tagId: null,
+  type: null,
+  value: null,
+  // tagId: null,
   tid: null,
   items: List()
 }) {
