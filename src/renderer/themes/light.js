@@ -68,9 +68,19 @@ export default jss.createStyleSheet({
     background: vars.color.base,
     color: vars.color.sub
   },
+  separator: {
+    // background: vars.color.accent,
+    // border: `1px dotted #565656`
+    background: '#565656',
+    border: `1px dotted ${vars.color.accent}`
+  },
   streetPlusBox: {
-    background: vars.color.accent,
-    borderRight: `1px solid ${vars.color.accentSub}`
+    background: '#565656',
+    // background: vars.color.accent,
+    borderRight: `3px solid ${vars.color.accentSub}`
+  },
+  streetPlusLogo: {
+    background: '#565656'
   },
   streetPlusIcon: {
     '&&': {
@@ -100,7 +110,7 @@ export default jss.createStyleSheet({
     }
   },
   card: {
-    border: '1px solid #dcdcdc',
+    border: '1px solid #565656',
     background: '#fefefe',
 
     '& .card__data': {

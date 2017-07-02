@@ -177,4 +177,7 @@ export default {
 #qC img {
   max-width: 100%;
 }
+#qC a {
+  word-wrap: break-word;
+}
 </style>

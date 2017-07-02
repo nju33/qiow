@@ -3,6 +3,12 @@
     class="street-plus__box"
     :class="$theme.streetPlusBox"
   >
+    <div
+      class="street-plus__logo"
+      :class="$theme.streetPlusLogo"
+    >
+      <img :src="logoUrl"/>
+    </div>
     <button ref="tagButton" class="street-plus__button">
       <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
     </button>
@@ -18,7 +24,12 @@
         v-stream:submit="{
           subject: submit$,
           data: {
-            type: 'tag',
+            instanceData: {
+              type: 'TAG',
+              context: {
+                tagId: form.tag
+              }
+            },
             value: form.tag
           }
         }"
@@ -52,7 +63,12 @@
         v-stream:submit="{
           subject: submit$,
           data: {
-            type: 'search',
+            instanceData: {
+              type: 'SEARCH',
+              context: {
+                searchText: form.search
+              }
+            },
             value: form.search
           }
         }"
@@ -88,6 +104,7 @@ import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/plus';
 import 'vue-octicon/icons/tag';
 import 'vue-octicon/icons/search';
+import Street from '../records/street';
 import Card from './card';
 import {moveTo} from '@/helpers';
 
@@ -98,6 +115,7 @@ export default {
   },
   data() {
     return {
+      logoUrl: 'static/logo.svg',
       tagId: '',
       tagTip: null,
       searchTip: null,
@@ -129,19 +147,18 @@ export default {
       // })
       .switchMap(data => {
         if (data.value !== '') {
-          return Rx.Observable.of(data);
+          return Rx.Observable.of(data.instanceData);
         }
         return Rx.Observable.never();
       })
-      .subscribe(data => {
-        // const {tagId} = this;
+      .subscribe(instanceData => {
+        const street = new Street(instanceData);
+        console.log(street);
+        // TODO:
+        this.form.tag = '';
+        this.form.search = '';
         this.state$.next({
-          fn: state => state.addStreet(data)
-            // const nextState = Object.assign({}, state);
-            // nextState.streets.push({
-            //   tagId,
-            //   items: []
-            // });
+          fn: state => state.addStreet(street)
             // return nextState;
         })
         // });
@@ -159,7 +176,8 @@ export default {
   mounted() {
     this.tagTip = tippy(this.$refs.tagButton, {
       html: this.$refs.tagForm,
-      position: 'top-start',
+      // position: 'top-start',
+      position: 'right-start',
       animation: 'shift',
       theme: 'light',
       interactive: true,
@@ -171,11 +189,11 @@ export default {
         this.form.tag = '';
       },
     });
-    this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
+    // this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
 
     this.searchTip = tippy(this.$refs.searchButton, {
       html: this.$refs.searchForm,
-      position: 'top-start',
+      position: 'right-start',
       animation: 'shift',
       theme: 'light',
       interactive: true,
@@ -187,7 +205,7 @@ export default {
         this.form.search = '';
       },
     });
-    this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
+    // this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
   }
 }
 </script>
@@ -200,6 +218,16 @@ export default {
     align-items: center;
     min-width: 66px;
     max-width: 66px;
+    position: fixed;
+    z-index: 9;
+    top: 0;
+    left: 0;
+  }
+  .street-plus__logo {
+    width: calc(100% + 0px);
+    padding: 16px;
+    box-sizing: border-box;
+    margin: 0 auto .5em;
   }
   .street-plus__box:hover .icon svg {
     opacity: .5;

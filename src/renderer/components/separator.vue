@@ -1,6 +1,7 @@
 <template>
   <div
     class="separator"
+    :class="$theme.separator"
     @mousedown="handleMousedown"
   />
 </template>
@@ -9,11 +10,20 @@
 import bindAll from 'lodash-decorators/bindAll';
 
 export default {
+  name: 'separator',
+  props: {
+    street: {
+      required: true
+    }
+  },
   data() {
     return {
       _dragging: false
     }
   },
+  /**
+   * v-stream:mousedown系が効かない…
+   */
   @bindAll()
   methods: {
     handleMousedown() {
@@ -31,15 +41,39 @@ export default {
         return;
       }
       const movement = ev.movementX;
-      const prevElem = this.$el.previousElementSibling;
-      const prevElemWidth = prevElem.clientWidth;
-      if (movement < 0) {
-        prevElem.style.minWidth = prevElemWidth + movement + 'px';
-        prevElem.style.maxWidth = prevElemWidth + movement + 'px';
-      } else {
-        prevElem.style.minWidth = prevElemWidth + movement + 'px';
-        prevElem.style.maxWidth = prevElemWidth + movement + 'px';
-      }
+      /**
+       * streets.pushに変更したのでprevじゃなくnext
+       * いい方法見つけたらprevに戻すかも
+       */
+      // const prevElem = this.$el.previousElementSibling;
+      // const prevElemWidth = prevElem.clientWidth;
+      // const prevElem = this.$el.nextElementSibling;
+      // const prevElemWidth = prevElem.clientWidth;
+      // if (movement < 0) {
+      this.state$.next({
+        type: 'RESIZE_STREET',
+        fn: state => {
+          const idx = state.streets.findIndex(s => s === this.street);
+          if (idx === -1) {
+            return state;
+          }
+          return state.merge({
+            streets: state.streets.update(
+              idx,
+              street => street.merge({
+                // width: prevElemWidth + movement
+                width: state.streets.get(idx).width + movement
+              })
+            )
+          })
+        }
+      });
+        // prevElem.style.minWidth = prevElemWidth + movement + 'px';
+        // prevElem.style.maxWidth = prevElemWidth + movement + 'px';
+      // } else {
+        // prevElem.style.minWidth = prevElemWidth + movement + 'px';
+        // prevElem.style.maxWidth = prevElemWidth + movement + 'px';
+      // }
     },
   },
   mounted() {
@@ -58,7 +92,7 @@ export default {
   flex: 0 0 1px;
   min-width: 1px;
   max-width: 1px;
-  border-left: 1px solid #222;
+  /*border-left: 1px solid #222;*/
   cursor: col-resize;
 }
 </style>

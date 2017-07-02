@@ -1,15 +1,36 @@
-import {Record, List} from 'immutable';
+import R from 'ramda';
+import {Record, Map, List} from 'immutable';
 import Street from './street';
 
 export default class State extends Record({
+  _id: 0,
   type: null,
   route: 'list',
   streets: List(),
+  control: Map(),
   detail: null,
   config: null,
   user: null,
   ctx: null
 }) {
+  export() {
+    const pick = R.pick([
+      'type',
+      'context',
+      'width',
+      'title'
+    ]);
+    console.log('exp');
+    console.log(R.map(pick, this.streets.toArray()));
+    return {
+      streets: R.map(pick, this.streets.toArray())
+    }
+  }
+
+  forceUpdate() {
+    return this.set('_id', this._id + 1);
+  }
+
   goList() {
     return this.set('route', 'list');
   }
@@ -18,13 +39,35 @@ export default class State extends Record({
     return this.set('route', 'detail');
   }
 
-  findStreet(tagId) {
-    return this.streets.findKey(Street.findByTagId(tagId));
+  addStreet(data) {
+    const street = new Street(data);
+    return this.streets.unshift(street);
+  }
+
+  findStreet(street) {
+    switch (street.type) {
+      case Street.types.TAG: {
+        const {tagId} = street.context;
+        return this.streets.findKey(Street.findByTagId(tagId));
+      }
+      case Street.types.SEARCH: {
+        const {searchText} = street.context;
+        return this.streets.findKey(Street.findBySearchText(searchText));
+      }
+      default: {
+        debugger;
+        throw new Error('おかしい');
+      }
+    }
+  }
+
+  setList() {
+
   }
 
   setDetail(data) {
     return this
-      .set('route', 'detail')
+      .goDetail()
       .set('detail', data);
   }
 
@@ -32,8 +75,10 @@ export default class State extends Record({
     if (!(street instanceof Street)) {
       throw new Error(`Not a value of Street: ${street}`);
     }
-    this.set('streets', this.streets.push(street));
-    return this;
+    /**
+     * vue-rxの問題なのかsource$がアップデートされないためpush
+     */
+    return this.set('streets', this.streets.push(street));
   }
 
   addStreetItems(tagId, items) {

@@ -1,17 +1,22 @@
 <template>
   <div id="root" class="box">
-    <StreetPlus/>
-    <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
-    <!-- <template v-for="tagId in followingTagIds"> -->
-    <template v-for="street in streets">
-      <Street :street="street"/>
-      <Separator/>
-    </template>
+    <div class="scroller" :style="{
+      width: width + 'px'
+    }">
+      <StreetPlus/>
+      <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
+      <!-- <template v-for="tagId in followingTagIds"> -->
+      <template v-for="(street, idx) in streets">
+        <Separator :street="streets[idx]"/>
+        <Street :street="street"/>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
+import {List} from 'immutable';
 import UserBoard from './user-board';
 import Street from './street';
 import StreetPlus from './street-plus';
@@ -32,11 +37,15 @@ export default {
   subscriptions() {
     return {
       user: this.state$.pluck('user'),
-      followingTagIds: this.state$
+      streets: this.state$
         .pluck('streets')
-        .map(streets => streets.toArray())
-        // .map(streets => streets.map(street => street.tagId))
-        // .map(idList => idList.toArray())
+        .map(streets => streets.toArray()),
+      width: this.state$
+        .pluck('streets')
+        .map(streets => streets.reduce((acc, street) => {
+          acc += street.width;
+          return acc;
+        }, 0))
     }
   },
   methods: {
@@ -47,14 +56,23 @@ export default {
 </script>
 
 <style scoped>
-  .box {
-    display: flex;
-    overflow-x: auto;
-  }
+.box {
+  width: 100vw;
+  overflow-x: auto;
+}
 
-  .box > * {
-    flex: auto;
-    max-width: 32em;
-    min-width: 32em;
-  }
+.scroller {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+  padding-left: 69px;
+  box-sizing: border-box;
+  width: 100vw;
+}
+
+.scroller > * {
+  flex: auto;
+  max-width: 32em;
+  min-width: 32em;
+}
 </style>

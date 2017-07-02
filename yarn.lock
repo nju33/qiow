@@ -4272,7 +4272,7 @@ map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
 
-map-obj@^2.0.0:
+map-obj@^2.0.0, map-obj@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-2.0.0.tgz#a65cd29087a92598b8791257a523e021222ac1f9"
 
@@ -5408,7 +5408,7 @@ qs@6.4.0, qs@~6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.4.0.tgz#13e26d28ad6b0ffaa91312cd3bf708ed351e7233"
 
-query-string@^4.1.0:
+query-string@^4.1.0, query-string@^4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.3.4.tgz#bbb693b9ca915c232515b228b1a02b609043dbeb"
   dependencies:
@@ -5918,6 +5918,13 @@ snake-case@^2.1.0:
   dependencies:
     no-case "^2.2.0"
 
+snakecase-keys@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/snakecase-keys/-/snakecase-keys-1.1.0.tgz#1adb17ddf7531c210cc293336f93d0ef1f8e73b8"
+  dependencies:
+    map-obj "~2.0.0"
+    to-snake-case "~0.1.2"
+
 sntp@1.x.x:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/sntp/-/sntp-1.0.9.tgz#6541184cc90aeea6c6e7b35e2659082443c66198"
@@ -6337,6 +6344,22 @@ to-arraybuffer@^1.0.0:
 to-fast-properties@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
+
+to-no-case@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/to-no-case/-/to-no-case-0.1.1.tgz#cf33c70e0f28168d95e4159abf150e8c542ef9fe"
+
+to-snake-case@~0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/to-snake-case/-/to-snake-case-0.1.2.tgz#d047b6dbf048dae1bdc260b3c296f54ca34eed7c"
+  dependencies:
+    to-space-case "0.1.2"
+
+to-space-case@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/to-space-case/-/to-space-case-0.1.2.tgz#9a66be3ebe53f2779f687f0262effd1fc5b6d15e"
+  dependencies:
+    to-no-case "0.1.1"
 
 toposort@^1.0.0:
   version "1.0.3"

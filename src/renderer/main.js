@@ -7,7 +7,7 @@ import axios from 'axios';
 import App from './App';
 import router from './router';
 import store from './store';
-import storage from './storage';
+import {loadData, saveData} from './storage';
 import State from './records/state';
 import Street from './records/street';
 import themes from './themes';
@@ -43,26 +43,29 @@ if (process.env.NODE_ENV !== 'production') {
     .do(state => console.log('Next: ', state))
     .subscribe(state => {
       this.$store = state;
+      if (state.streets.size > 0) {
+        saveData(state.export());
+      }
     })
 }
 
 Vue.prototype.state$.next({
   fn() {
     return new State({
-      streets: new List([
-        new Street({
-          type: 'tag',
-          value: 'nodejs'
-        }),
-        new Street({
-          type: 'tag',
-          value: 'javascript'
-        }),
-        new Street({
-          type: 'search',
-          value: 'aws'
-        })
-      ])
+      // streets: new List([
+      //   new Street({
+      //     type: 'TAG',
+      //     context: {tagId: 'nodejs'}
+      //   }),
+      //   new Street({
+      //     type: 'TAG',
+      //     context: {tagId: 'javascript'}
+      //   }),
+      //   new Street({
+      //     type: 'SEARCH',
+      //     context: {searchText: 'aws'}
+      //   })
+      // ])
     });
   }
 });

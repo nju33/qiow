@@ -1,17 +1,36 @@
 import {Record, List} from 'immutable';
 import {uniqById} from '../helpers';
+import Api from './api';
 
 export default class Street extends Record({
   type: null,
-  value: null,
-  // tagId: null,
+  context: {},
+  width: 400,
+  title: null,
   tid: null,
-  items: List()
+  items: List(),
+  api: null,
 }) {
-  static findByTagId(targetId) {
-    return obj => {
-      return obj.tagId === targetId;
-    }
+  static types = {
+    TAG: 'TAG',
+    SEARCH: 'SEARCH'
+  };
+
+  static findByTagId(tagId) {
+    return street => street.context.tagId === tagId;
+  }
+
+  static findBySearchText(searchText) {
+    return street => street.context.searchText === searchText;
+  }
+
+  constructor(data) {
+    const title = Object.values(data.context).join(',');
+    const api = new Api({
+      type: data.type,
+      context: data.context
+    });
+    super({...data, title, api});
   }
 
   isChanged(items) {
@@ -40,5 +59,10 @@ export default class Street extends Record({
     const concatenated = this.items.concat(List(items));
     const nextItems = this._uniqById(concatenated);
     return this.set('items', nextItems);
+  }
+
+  pageIncrement() {
+    const nextApi = this.api.pageIncrement();
+    return this.set('api', nextApi);
   }
 }

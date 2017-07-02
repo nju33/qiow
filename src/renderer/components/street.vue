@@ -1,10 +1,20 @@
 <template>
-  <section class="street__box">
-    <header class="street__header">
+  <section
+    class="street__box"
+    :style="{
+      minWidth: street.width + 'px',
+      maxWidth: street.width + 'px'
+  }">
+    <header
+      class="street__header"
+      draggable="true"
+      ref="header"
+    >
       <div class="header__left"></div>
-      <h3 class="header__title">{{tagId}}</h3>
+      <h3 class="header__title">{{street.title}}</h3>
       <div class="header__right">
         <button
+          class="header__button"
           v-stream:click="delete$"
         >
           <Octicon name="x"/>
@@ -44,12 +54,14 @@
 </template>
 
 <script>
+import R from 'ramda';
 import Rx from 'rxjs/Rx';
 import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/x';
 import _ from 'lodash';
 import camelcaseKeys from 'camelcase-keys';
 import Prdiv from 'vue-prdiv/components/Prdiv';
+import Street from '../records/street';
 import Card from './card';
 import Loading from './loading';
 
@@ -61,8 +73,7 @@ export default {
     Loading
   },
   props: {
-    tagId: {
-      type: String,
+    street: {
       required: true
     }
   },
@@ -96,6 +107,24 @@ export default {
       }
     }
   },
+  watch: {
+    street(street, oldStreet) {
+      if (street.title !== oldStreet.title) {
+        // this.state$.next({
+        //   fn: state => {
+        //     return state.forceUpdate();
+        //   }
+        // });
+        // console.log('--------------------------');
+        // console.log(street.title,oldStreet.title);
+        // console.log(this.street.toJS());
+        this.getItems$.next({
+          type: 'CHANGE',
+          // items: this.street.items.toArray()
+        });
+      }
+    }
+  },
   domStreams: ['scroll$', 'delete$'],
   subscriptions() {
     const self = this;
@@ -104,22 +133,26 @@ export default {
     this.getItems$ = new Rx.Subject()
       .do(() => console.log('Called: getItems$'))
       .switchMap(({type, ctx}) => {
-        const page = (() => {
-          if (type === 'NEXT') {
-            return this.page;
-          }
-          return 1;
-        })();
-        const query = `?page=${page}`
-        const url = `https://qiita.com/api/v2/tags/${self.tagId}/items${query}`;
+        if (type === 'CHANGE') {
+          return Rx.Observable.of([type, {}, this.street.items.toArray()]);
+        }
+
+        if (type === 'INIT' && this.street.items.size > 0) {
+          return Rx.Observable.of([type, {}, this.street.items.toArray()]);
+        }
 
         return Rx.Observable.forkJoin(
           Rx.Observable.of(type),
           Rx.Observable.of(ctx),
           Rx.Observable
-           .fromPromise(this.$http(url))
+           .fromPromise(this.$http((type => {
+             if (type === 'LOAD') {
+               return this.street.api.firstUrl;
+             }
+             return this.street.api.url;
+           })(type)))
            .pluck('data')
-           .do(data => console.log('get', self.tagId, data))
+           .do(data => console.log('get', self.title, data))
            .map(items => items.map(item => {
              const _item = camelcaseKeys(item)
              _item.user = camelcaseKeys(_item.user);
@@ -132,23 +165,33 @@ export default {
           type,
           items: items,
           fn(state) {
-            const streetIdx = state.findStreet(self.tagId);
+            const streetIdx = state.findStreet(self.street);
             const street = state.streets.get(streetIdx);
             if (typeof street === 'undefined') {
               return state;
             }
 
             switch (type) {
+              case 'CHANGE': {
+                console.log(self.street);
+                return state.merge({
+                  type,
+                  // streets: state.streets.set(streetIdx, self.street)
+                });
+              }
               case 'INIT': {
-                const nextStreet = street.addItems(items);
+                const nextStreet = street
+                  .addItems(items)
+                  .pageIncrement();
                 return state.merge({
                   type,
                   streets: state.streets.set(streetIdx, nextStreet)
                 });
               }
               case 'NEXT': {
-                self.page++;
-                const nextStreet = street.addItems(items);
+                const nextStreet = street
+                  .addItems(items)
+                  .pageIncrement();
                 return state.merge({
                   type,
                   streets: state.streets.set(streetIdx, nextStreet)
@@ -179,6 +222,14 @@ export default {
     const source$ = Rx.Observable.create(observer => {
       const subscription = this.getItems$
         .scan((oldData, data) => {
+          console.log(data);
+          if (data.type === 'CHANGE') {
+            return {
+              ...data,
+              items: data.items
+            };
+          }
+
           return {
             ...data,
             items: [...oldData.items, ...data.items]
@@ -196,14 +247,32 @@ export default {
       const subscription = this.delete$
         .subscribe(() => {
           const fn = state => {
-            const nextState = Object.assign({}, state);
-            const idx = nextState.streets.findIndex(s => s.tagId === self.tagId);
+            const idx = state.streets.findIndex(street => {
+              switch (street.type) {
+                case Street.types.TAG: {
+                  const lens = R.lensPath(['context', 'tagId']);
+                  const view = R.view(lens);
+                  return view(street) === view(self.street);
+                }
+                case Street.types.SEARCH: {
+                  const lens = R.lensPath(['context', 'searchText']);
+                  const view = R.view(lens);
+                  return view(street) === view(self.street);
+                }
+                default: {
+                  debugger;
+                  throw new Error('おかしい');
+                }
+              }
+            });
 
             if (idx === -1) {
               return state;
             }
-            nextState.streets.splice(idx, 1);
-            return nextState;
+
+            return state.merge({
+              streets: state.streets.delete(idx)
+            });
           }
           this.state$.next({fn});
         });
@@ -248,6 +317,66 @@ export default {
       items: source$,
     };
   },
+  mounted() {
+    this.$refs.header.addEventListener('dragstart', ev => {
+      this.state$.next({
+        type: 'DRAGSTART',
+        fn: state => {
+          return state.merge({
+            control: state.control.set('from', this.street)
+          });
+        }
+      });
+    })
+
+    // this.$watchAsObservable('street')
+    //   .do(function () {console.log('adfadsfasdfsfsdf')})
+    //   .do(function () {console.log(arguments)})
+    //
+    this.$refs.header.addEventListener('dragover', ev => {
+      this.state$.next({
+        type: 'DRAGOVER',
+        fn: state => {
+          if (state.control.get('to') === this.street) {
+            return state;
+          }
+
+          return state.merge({
+            control: state.control.set('to', this.street)
+          });
+        }
+      });
+    });
+
+    this.$refs.header.addEventListener('dragend', ev => {
+      this.state$.next({
+        type: 'DRAGEND',
+        fn: state => {
+          const fromStreet = state.control.get('from');
+          const toStreet = state.control.get('to');
+          if (fromStreet === toStreet) {
+            return state;
+          }
+
+          const fromStreetIdx = state.streets.findIndex(s => s === fromStreet);
+          const toStreetIdx = state.streets.findIndex(s => s === toStreet);
+
+          if (fromStreetIdx === -1 || toStreetIdx === -1) {
+            return state;
+          }
+
+          console.log(9999);
+
+          return state.merge({
+            streets: state.streets
+              .update(fromStreetIdx, () => toStreet)
+              .update(toStreetIdx, () => fromStreet),
+            control: state.control.delete()
+          });
+        }
+      });
+    })
+  },
   beforeDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
@@ -264,9 +393,21 @@ export default {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
   }
+  .header__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
   .header__title {
     text-align: center;
     padding: .5em;
+  }
+  .header__button {
+    border: none;
+    background: transparent;
+    margin-top: 5px;
+    margin-right: .5em;
+    cursor: pointer;
   }
   .prdiv-box {
     position: relative;
