@@ -45,6 +45,13 @@ export default jss.createStyleSheet({
       background: '#282c34',
       color: '#9da5b4'
     },
+    '#qC table': {
+      padding: 0,
+      border: `1px solid ${vars.color.sub}`
+    },
+    '#qC thead': {
+      background: '#ccc'
+    },
     ':root:root #qC hr': {
       opacity: .15,
       border: 'none',
@@ -119,5 +126,8 @@ export default jss.createStyleSheet({
   },
   loadingIcon: {
     fill: vars.color.accent
+  },
+  breadclumbItemFirst: {
+    color: vars.color.accent
   }
 });

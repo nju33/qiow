@@ -110,17 +110,8 @@ export default {
   watch: {
     street(street, oldStreet) {
       if (street.title !== oldStreet.title) {
-        // this.state$.next({
-        //   fn: state => {
-        //     return state.forceUpdate();
-        //   }
-        // });
-        // console.log('--------------------------');
-        // console.log(street.title,oldStreet.title);
-        // console.log(this.street.toJS());
         this.getItems$.next({
           type: 'CHANGE',
-          // items: this.street.items.toArray()
         });
       }
     }

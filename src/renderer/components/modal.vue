@@ -1,9 +1,10 @@
 <template lang="html">
   <transition name="modal">
-    <div v-if="isDetail" class="modal__outer-box" v-stream:click="close$">
+    <!-- <div v-if="isDetail" class="modal__outer-box" v-stream:click="close$"> -->
+    <div v-if="isDetail" class="modal__outer-box">
       <div class="modal__box">
-        <ModalMenu :close$="close$"/>
-        <QiitaContents :title="title" :contents="contents"/>
+        <ModalMenu :close$="close$" :breadclumb="breadclumb"/>
+        <QiitaContents :title="title" :headlineStack="headlineStack" :contents="contents"/>
       </div>
     </div>
   </transition>
@@ -24,7 +25,19 @@ export default {
     return {
       isDetail: false,
       title: '',
+      headlineStack: [],
+      _cacheHeadlineStack: new WeakMap(),
       contetns: ''
+    }
+  },
+  computed: {
+    breadclumb() {
+      // if (typeof this.$refs.qiitaContents === 'undefined') {
+      //   return [this.title];
+      // }
+      return [this.title].concat(this.headlineStack.map(elem => {
+        return elem.innerText;
+      }));
     }
   },
   subscriptions() {
@@ -38,6 +51,10 @@ export default {
     });
 
     this.close$ = new Rx.Subject()
+      .do(({event}) => {
+        console.log(999);
+        event.stopPropagation();
+      })
       .map(() => ({
         type: this.close$,
         fn: state => state.goList()

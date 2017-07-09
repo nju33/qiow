@@ -19,6 +19,9 @@ export default class Api extends Record({
       case Street.types.SEARCH: {
         return 'https://qiita.com/api/v2/items';
       }
+      case Street.types.STOCK: {
+        return `https://qiita.com/api/v2/users/${userId}/stocks`;
+      }
       default: {
         debugger;
         throw new Error('おかしい');
@@ -28,7 +31,8 @@ export default class Api extends Record({
 
   get query() {
     switch (this.type) {
-      case Street.types.TAG: {
+      case Street.types.TAG:
+      case Street.types.STOCK: {
         return queryString.stringify(
           snakecaseKeys(R.pick(['page', 'perPage'], this))
         );
@@ -55,7 +59,8 @@ export default class Api extends Record({
       case Street.types.TAG: {
         return `${this.endpoint}/${this.context.tagId}/items?${query}`;
       }
-      case Street.types.SEARCH: {
+      case Street.types.SEARCH:
+      case Street.types.STOCK: {
         return `${this.endpoint}?${query}`;
       }
       default: {
@@ -70,7 +75,8 @@ export default class Api extends Record({
       case Street.types.TAG: {
         return `${this.endpoint}/${this.context.tagId}/items?${this.query}`;
       }
-      case Street.types.SEARCH: {
+      case Street.types.SEARCH:
+      case Street.types.STOCK: {
         return `${this.endpoint}?${this.query}`;
       }
       default: {

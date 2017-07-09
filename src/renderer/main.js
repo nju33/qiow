@@ -1,3 +1,5 @@
+import 'intersection-observer';
+import smoothscroll from 'smoothscroll-polyfill';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import {List} from 'immutable';
@@ -12,6 +14,8 @@ import State from './records/state';
 import Street from './records/street';
 import themes from './themes';
 import init from './init';
+
+smoothscroll.polyfill();
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';

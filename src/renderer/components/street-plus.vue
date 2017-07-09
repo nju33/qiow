@@ -3,18 +3,31 @@
     class="street-plus__box"
     :class="$theme.streetPlusBox"
   >
-    <div
-      class="street-plus__logo"
-      :class="$theme.streetPlusLogo"
-    >
-      <img :src="logoUrl"/>
+    <div class="street-plus__group">
+      <div
+        class="street-plus__logo"
+        :class="$theme.streetPlusLogo"
+      >
+        <img class="street-plus__img" :src="logoUrl"/>
+      </div>
+      <button class="street-plus__button">
+        <Octicon name="package" scale="1.5" :class="$theme.streetPlusIcon"/>
+      </button>
+      <button ref="tagButton" class="street-plus__button">
+        <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
+      </button>
+      <button ref="searchButton" class="street-plus__button">
+        <Octicon name="search" scale="1.2" :class="$theme.streetPlusIcon"/>
+      </button>
     </div>
-    <button ref="tagButton" class="street-plus__button">
-      <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
-    </button>
-    <button ref="searchButton" class="street-plus__button">
-      <Octicon name="search" scale="1.2" :class="$theme.streetPlusIcon"/>
-    </button>
+    <div class="street-plus__group--bottom">
+      <div
+        class="street-plus__logo"
+        :class="$theme.streetPlusLogo"
+      >
+        <img class="street-plus__img" :src="user && user.get('profileImageUrl')"/>
+      </div>
+    </div>
 
     <section
       ref="tagForm"
@@ -102,6 +115,7 @@ import Rx from 'rxjs/Rx';
 import tippy from 'tippy.js';
 import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/plus';
+import 'vue-octicon/icons/package';
 import 'vue-octicon/icons/tag';
 import 'vue-octicon/icons/search';
 import Street from '../records/street';
@@ -112,6 +126,11 @@ export default {
   components: {
     Card,
     Octicon
+  },
+  props: {
+    user: {
+      required: true
+    }
   },
   data() {
     return {
@@ -215,6 +234,7 @@ export default {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     min-width: 66px;
     max-width: 66px;
@@ -223,11 +243,20 @@ export default {
     top: 0;
     left: 0;
   }
+  .street-plus__group {
+
+  }
+  .street-plus__img {
+    max-width: 100%;
+  }
   .street-plus__logo {
     width: calc(100% + 0px);
     padding: 16px;
     box-sizing: border-box;
     margin: 0 auto .5em;
+  }
+  .street-plus__logo + .street-plus__logo {
+    margin-top: -1.5em;
   }
   .street-plus__box:hover .icon svg {
     opacity: .5;
@@ -242,8 +271,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 50%;
     cursor: pointer;
+    border: 1px solid rgba(0,0,0,.7);
+    transform: scale(0.7);
   }
   .street-plus__button:not(:first-child) {
     margin-top: 0;

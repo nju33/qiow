@@ -3,13 +3,14 @@
     <div class="scroller" :style="{
       width: width + 'px'
     }">
-      <StreetPlus/>
-      <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
+      <StreetPlus :user="user"/>
       <!-- <template v-for="tagId in followingTagIds"> -->
       <template v-for="(street, idx) in streets">
         <Separator :street="streets[idx]"/>
         <Street :street="street"/>
       </template>
+
+      <!-- <UserBoard :name="user.id" :profileImageUrl="user.profileImageUrl"/> -->
     </div>
   </div>
 </template>

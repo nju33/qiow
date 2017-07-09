@@ -1,5 +1,5 @@
 <template>
-  <div class="qiita-contents__box">
+  <div ref="box" class="qiita-contents__box">
       <section class="qiita-contents__center">
       <h1
         class="qiita-contents__title"
@@ -14,6 +14,9 @@
 <script>
 import Rx from 'rxjs/Rx';
 import hljs from 'highlightjs';
+import throttle from 'lodash/throttle';
+import jump from 'jump.js';
+import zenscroll from 'zenscroll';
 import 'highlightjs/styles/atom-one-dark.css';
 
 export default {
@@ -23,6 +26,9 @@ export default {
       required: true,
       type: String
     },
+    // headlineStack: {
+    //   type: Array
+    // },
     contents: {
       required: true,
       type: String
@@ -30,19 +36,213 @@ export default {
   },
   data() {
     return {
-      _disposables: [],
-      transformedContents: null
+      headlineStack: [],
+      transformedContents: null,
+      _disposables: []
     }
   },
-  // beforeCreate() {
-  // },
+  methods: {
+    getPreviousHeadline(headline) {
+      let prev = headline.previousElementSibling;
+      if (prev === null) {
+        return null;
+      }
+
+      while (!/H\d/.test(prev.tagName)) {
+        prev = prev.previousElementSibling;
+        if (prev === null) {
+          return null;
+        }
+      }
+      if (this.$refs.box.scrollTop <= prev.offsetTop) {
+        prev = this.getPreviousHeadline(prev);
+      }
+      return prev;
+    },
+    getHeadlineLevel(headline) {
+      return Number(headline.tagName.match(/\d$/)[0]);
+    }
+  },
   mounted() {
+    const headlineIOSource$ = new Rx.Subject()
+      .pairwise()
+      .map(([prev, current]) => {
+        const isScrollDown = prev.scrollTop < current.scrollTop;
+        const isScrollUp = prev.scrollTop >= current.scrollTop;
+
+        if (
+          isScrollDown
+          // current.visible
+        ) {
+          const {headline} = current;
+          if (current.scrollTop <= headline.offsetTop - headline.clientHeight) {
+            return;
+          }
+
+          if (this.$parent.headlineStack.length === 0) {
+            this.$parent.$data._cacheHeadlineStack.set(headline, []);
+            this.$parent.headlineStack.push(headline);
+            return;
+          }
+
+          const level = this.getHeadlineLevel(headline);
+
+          const {
+            headline: lastHeadline,
+            headlineLevel: lastHeadlineLevel
+          } = ($p => {
+            const lastIdx = $p.headlineStack.length - 1;
+            const headline = $p.headlineStack[lastIdx]
+            const headlineLevel = this.getHeadlineLevel(headline);
+            return {headline, headlineLevel};
+          })(this.$parent);
+
+
+          if (lastHeadlineLevel >= level) {
+            const nextStack = this.$parent.headlineStack.reduce((acc, stackedHeadline) => {
+              if (this.getHeadlineLevel(stackedHeadline) < level) {
+                acc.push(stackedHeadline);
+              }
+              return acc;
+            }, [])
+            this.$parent.$data._cacheHeadlineStack.set(
+              headline,
+              [...this.$parent.headlineStack]
+            );
+            nextStack.push(headline);
+            this.$parent.headlineStack = nextStack;
+          } else if (lastHeadlineLevel < level) {
+            this.$parent.$data._cacheHeadlineStack.set(
+              headline,
+              [...this.$parent.headlineStack]
+            );
+            this.$parent.headlineStack.push(headline);
+          }
+        } else if (
+          isScrollUp &&
+          // current.scrollTop p current.headline.clientHeight
+          // current.scrollTop < current.headline.offsetTop - current.headline.clientHeight
+          // current.boxHeight + current.scrollTop > current.headline.offsetTop &&
+          current.visible
+        ) {
+          const {headline: nextHeadline} = current;
+          const headline = this.getPreviousHeadline(nextHeadline);
+          if (headline === null) {
+            this.$parent.headlineStack = [];
+            return;
+          }
+
+          this.$parent.headlineStack = this.$parent.$data._cacheHeadlineStack.get(headline) || [];
+
+          const level = this.getHeadlineLevel(headline);
+          if (this.$parent.headlineStack.length === 0) {
+            this.$parent.headlineStack.push(headline);
+            return;
+          }
+
+          const {
+            headline: lastHeadline,
+            headlineLevel: lastHeadlineLevel
+          } = ($p => {
+            const lastIdx = $p.headlineStack.length - 1;
+            const headline = $p.headlineStack[lastIdx]
+            const headlineLevel = this.getHeadlineLevel(headline);
+            return {headline, headlineLevel};
+          })(this.$parent);
+
+          if (lastHeadlineLevel >= level) {
+            const nextStack = this.$parent.headlineStack.reduce((acc, stackedHeadline) => {
+              if (this.getHeadlineLevel(stackedHeadline) < level) {
+                acc.push(stackedHeadline);
+              }
+              return acc;
+            }, [])
+            nextStack.push(headline);
+            this.$parent.headlineStack = nextStack;
+          } else if (lastHeadlineLevel < level) {
+            this.$parent.headlineStack.push(headline);
+          }
+        }
+      })
+
+    this.$data._disposables.push(headlineIOSource$.subscribe());
+
+    const headlineIO = new IntersectionObserver(([entry], a) => {
+      headlineIOSource$.next({
+        boxHeight: this.$refs.box.clientHeight,
+        scrollTop: this.$refs.box.scrollTop,
+        headline: entry.target,
+        visible: entry.intersectionRatio > 0.75
+      });
+    }, {
+      threshold: [0, 0.25, 0.5, 0.75, 1]
+    });
+
+
     this.$electron.ipcRenderer.send('transformCodeBlock:req', this.contents);
     this.$electron.ipcRenderer.on('transformCodeBlock:res', (ev, contents) => {
+      let handleIO = null;
     // this.$electron.ipcRenderer.on('transformCodeBlock:res', function () {
-      // console.log(arguments);
       this.transformedContents = contents;
+      setTimeout(() => {
+        this.$refs.contents.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(elem => {
+          headlineIO.observe(elem);
+        });
+      }, 0);
     });
+
+    // zenscroll.setup(500);
+    // const a = zenscroll.createScroller(this.$refs.box);
+    // a.setup(500);
+    // const b = a.moving()
+    // let scrolling = null;
+    Rx.Observable.fromEvent(document, 'keydown')
+      // .throttleTime(200)
+      .scan((acc, ev) => {
+        switch (ev.key) {
+          case 'ArrowDown':
+          case 'j': {
+            acc += 50;
+            break;
+          }
+          case 'ArrowUp':
+          case 'k': {
+            acc -= 50;
+            break;
+          }
+          case 'd': {
+            acc += ~~this.$refs.box.clientHeight / 2
+            break;
+          }
+          case 'u': {
+            acc -= ~~this.$refs.box.clientHeight / 2
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+
+        if (acc < 0) {
+          acc = 0;
+        } else if (acc > this.$refs.box.scrollHeight) {
+          acc = this.$refs.box.scrollHeight;
+        }
+        return acc;
+      }, 0)
+      .map(height => {
+        // if (a.moving()) {
+        //   a.stop();
+        // }
+        // a.toY(height, 500)
+        // jump(this.$refs.box, {offset: height})
+        this.$refs.box.scrollTop = height;
+        // this.$refs.box.scrollBy({top: 100, behavior: 'smooth'})
+        // this.$refs.box.scrollBy({top: 100})
+        // const b = a.moving()
+      })
+      .subscribe();
+
     // (() => {
     //   const codeBlocks = this.$refs.contents.querySelectorAll('.code-frame');
     //   if (codeBlocks.length === 0) {
@@ -101,6 +301,7 @@ export default {
 
 <style scoped>
 .qiita-contents__box {
+  scroll-behavior: smooth;
   overflow: auto;
   font-size: 1.1em;
 }
@@ -117,6 +318,7 @@ export default {
 
 <style>
 #qc {
+  position: relative;
   line-height: 1.7;
 }
 #qC > *:not(img) {

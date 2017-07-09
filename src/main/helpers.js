@@ -1,5 +1,11 @@
 import cheerio from 'cheerio';
+import escapeHtml from 'escape-html';
 import hljs from 'highlightjs';
+import codeFormat from './code-format';
+
+const highlight = (lang, code) => {
+  return hljs.highlight(lang, code).value;
+};
 
 export const transformContents = contents => {
   const $ = cheerio.load(contents, {decodeEntities: false});
@@ -9,11 +15,23 @@ export const transformContents = contents => {
     const lang = $el.data('lang')
     const $pre = $el.find('pre')
     const code = $pre.text();
-    console.log(code);
-    try {
-      const transformed = hljs.highlight(lang, code).value;
-      $pre.html(transformed);
-    } catch (_) {}
+    const formattedCode = codeFormat({lang, code});
+    // if (lang === 'text' || lang === '') {
+
+    $pre.text(formattedCode);
+    // }
+    // try {
+    //   if (lang === 'text') {
+    //     $pre.text(escapeHtml(code));
+    //   }
+    //
+    //   const transformed = highlight(lang, code);
+    //   console.log('transformed');
+    //   $pre.html(transformed);
+    // } catch (_) {
+    //   console.log(99);
+    //   $pre.text(escapeHtml(code));
+    // }
   });
   return $.html();
   // if (codeBlocks.length === 0) {
