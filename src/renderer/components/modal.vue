@@ -4,7 +4,7 @@
     <div v-if="isDetail" class="modal__outer-box">
       <div class="modal__box">
         <ModalMenu :close$="close$" :breadclumb="breadclumb"/>
-        <QiitaContents :title="title" :headlineStack="headlineStack" :contents="contents"/>
+        <QiitaContents :title="title" :headlineStack="headlineStack" :contents="contents" :close$="close$"/>
       </div>
     </div>
   </transition>
@@ -51,10 +51,9 @@ export default {
     });
 
     this.close$ = new Rx.Subject()
-      .do(({event}) => {
-        console.log(999);
-        event.stopPropagation();
-      })
+      // .do(({event}) => {
+      //   event.stopPropagation();
+      // })
       .map(() => ({
         type: this.close$,
         fn: state => state.goList()
@@ -88,8 +87,10 @@ export default {
   flex-direction: column;
   position: absolute;
   left: 0;
-  top: 5vh;
-  height: 95vh;
+  top: 0;
+  /*top: 5vh;*/
+  /*height: 95vh;*/
+  height: 100vh;
   width: 100vw;
   background: #fff;
   transition:

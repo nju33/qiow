@@ -47,10 +47,14 @@ export default jss.createStyleSheet({
     },
     '#qC table': {
       padding: 0,
-      border: `1px solid ${vars.color.sub}`
+      border: `1px solid ${'#282c34'}`
     },
     '#qC thead': {
-      background: '#ccc'
+      background: '#282c34',
+      color: '#9ea6b3'
+    },
+    '#qC table th, $qC table td': {
+      border: '1px solid #282c34'
     },
     ':root:root #qC hr': {
       opacity: .15,
@@ -129,5 +133,22 @@ export default jss.createStyleSheet({
   },
   breadclumbItemFirst: {
     color: vars.color.accent
+  },
+  qiitaActionButton: {
+    border: `2px solid ${'#565656'}`,
+    boxSizing: 'border-box',
+    transition: `.2s ${easing}`,
+    transform: 'scale(0.7)',
+    transformOrigin: 'center center',
+    background: '#b39f29',
+
+    '&:hover': {
+      transform: 'scale(1)',
+      background: vars.color.accent
+    },
+
+    '& svg': {
+      fill: '#fff'
+    }
   }
 });

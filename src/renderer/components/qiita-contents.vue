@@ -1,6 +1,6 @@
 <template>
   <div ref="box" class="qiita-contents__box">
-      <section class="qiita-contents__center">
+    <section class="qiita-contents__center">
       <h1
         class="qiita-contents__title"
         :class="{[$theme.title]: true}"
@@ -8,11 +8,18 @@
       />
       <div ref="contents" id="qC" v-html="transformedContents"/>
     </section>
+    <div class="qiita-action">
+      <button class="qiita-action__button" :class="$theme.qiitaActionButton">
+        <Octicon name="package" scale="1.3"/>
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
+import Octicon from 'vue-octicon/components/Octicon';
+import 'vue-octicon/icons/package';
 import hljs from 'highlightjs';
 import throttle from 'lodash/throttle';
 import jump from 'jump.js';
@@ -21,17 +28,20 @@ import 'highlightjs/styles/atom-one-dark.css';
 
 export default {
   name: 'qiita-contents',
+  components: {
+    Octicon
+  },
   props: {
     title: {
       required: true,
       type: String
     },
-    // headlineStack: {
-    //   type: Array
-    // },
     contents: {
       required: true,
       type: String
+    },
+    close$: {
+      required: true
     }
   },
   data() {
@@ -196,26 +206,45 @@ export default {
     // a.setup(500);
     // const b = a.moving()
     // let scrolling = null;
-    Rx.Observable.fromEvent(document, 'keydown')
+    const keybindSource$ = Rx.Observable.merge(
+      Rx.Observable.fromEvent(document, 'keydown'),
+      Rx.Observable.fromEvent(document, 'keyup')
+    )
       // .throttleTime(200)
       .scan((acc, ev) => {
+        if (ev.type === 'keyup') {
+          return {
+            type: ev.type,
+            height: 0
+          };
+        }
+
+        if (acc.height === 0) {
+          acc.height = this.$refs.box.scrollTop;
+        }
+
         switch (ev.key) {
+          case 'Escape': {
+            // console.log(this.close$);
+            this.close$.next();
+            break;
+          }
           case 'ArrowDown':
           case 'j': {
-            acc += 50;
+            acc.height += 21;
             break;
           }
           case 'ArrowUp':
           case 'k': {
-            acc -= 50;
+            acc.height -= 21;
             break;
           }
           case 'd': {
-            acc += ~~this.$refs.box.clientHeight / 2
+            acc.height += ~~this.$refs.box.clientHeight / 2
             break;
           }
           case 'u': {
-            acc -= ~~this.$refs.box.clientHeight / 2
+            acc.height -= ~~this.$refs.box.clientHeight / 2
             break;
           }
           default: {
@@ -223,43 +252,27 @@ export default {
           }
         }
 
-        if (acc < 0) {
-          acc = 0;
-        } else if (acc > this.$refs.box.scrollHeight) {
-          acc = this.$refs.box.scrollHeight;
+        if (acc.height < 0) {
+          acc.height = 0;
+        } else if (acc.height > this.$refs.box.scrollHeight) {
+          acc.height = this.$refs.box.scrollHeight;
         }
-        return acc;
-      }, 0)
-      .map(height => {
-        // if (a.moving()) {
-        //   a.stop();
-        // }
-        // a.toY(height, 500)
-        // jump(this.$refs.box, {offset: height})
-        this.$refs.box.scrollTop = height;
-        // this.$refs.box.scrollBy({top: 100, behavior: 'smooth'})
-        // this.$refs.box.scrollBy({top: 100})
-        // const b = a.moving()
+        return {
+          type: ev.type,
+          height: acc.height
+        };
+      }, {
+        type: null,
+        height: 0
       })
-      .subscribe();
+      .map(({type, height}) => {
+        if (type === 'keyup') {
+          return;
+        }
+        this.$refs.box.scrollTop = height;
+      });
+    this.$data._disposables.push(keybindSource$.subscribe());
 
-    // (() => {
-    //   const codeBlocks = this.$refs.contents.querySelectorAll('.code-frame');
-    //   if (codeBlocks.length === 0) {
-    //     return;
-    //   }
-    //
-    //   Array.from(codeBlocks).forEach(block => {
-    //     const {lang} = block.dataset;
-    //     const pre = block.querySelector('pre');
-    //     if (pre === null) {
-    //       return;
-    //     }
-    //     try {
-    //       hljs.highlight(lang, pre.innerText).value;
-    //     } catch (_) {}
-    //   });
-    // })();
 
     const addEventListenerForA = (() => {
       const openLink$ = new Rx.Subject()
@@ -303,16 +316,37 @@ export default {
 .qiita-contents__box {
   scroll-behavior: smooth;
   overflow: auto;
-  font-size: 1.1em;
+  font-size: .95em;
+  line-height: 1.75;
+  display: flex;
+  justify-content: center;
 }
 .qiita-contents__center {
-  width: 37em;
-  margin: 0 auto;
+  position: relative;
+  width: 41em;
+  margin: 1em 0 1.5em;
 }
 .qiita-contents__title {
-  font-size: 2.1em;
+  font-size: 1.6em;
   font-weight: normal;
   padding: 0 .75rem;
+}
+.qiita-action {
+  position: fixed;
+  bottom: 2em;
+  margin-left: calc(20.5em + 4em);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.qiita-action__button {
+  height: 4em;
+  width: 4em;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 </style>
 
@@ -330,11 +364,11 @@ export default {
   margin: 0;
 }
 #qC h1 {
-  font-size: 1.95em;
+  font-size: 1.6em;
   border-bottom: 1px solid;
 }
 #qC h2 {
-  font-size: 1.75em;
+  font-size: 1.45em;
 }
 #qC h3 {
   font-size: 1.3em;
@@ -348,6 +382,18 @@ export default {
 }
 #qC h6 {
   font-size: .9em;
+}
+#qC table {
+  padding: 0;
+  border-collapse: collapse;
+  font-size: .95em;
+}
+#qC table th,
+#qC table td {
+  padding: .25em .5em;
+}
+#qC table td {
+  border: 1px solid;
 }
 #qC .code-frame {
   position: relative;

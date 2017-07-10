@@ -78,11 +78,12 @@ export default {
   display: flex;
   align-items: center;
   padding: .25em .5em;
+  max-width: calc(100vw - 5em);
 }
 
 .breadclumb__item {
-  flex: 1 0 auto;
-  max-width: 20em;
+  /*flex: 1 0 auto;*/
+  /*max-width: 30em;*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: pre;
