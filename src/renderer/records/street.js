@@ -25,6 +25,13 @@ export default class Street extends Record({
     return street => street.context.searchText === searchText;
   }
 
+  static findStockByUserId(userId) {
+    return street => {
+      return street.type === Street.types.STOCK &&
+             street.context.userId === userId;
+    };
+  }
+
   constructor(data) {
     const title = Object.values(data.context).join(',');
     const api = new Api({

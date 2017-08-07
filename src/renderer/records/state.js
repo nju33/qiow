@@ -54,6 +54,10 @@ export default class State extends Record({
         const {searchText} = street.context;
         return this.streets.findKey(Street.findBySearchText(searchText));
       }
+      case Street.types.STOCK: {
+        const {userId} = street.context;
+        return this.streets.findKey(Street.findStockByUserId(userId));
+      }
       default: {
         debugger;
         throw new Error('おかしい');

@@ -20,7 +20,7 @@ export default class Api extends Record({
         return 'https://qiita.com/api/v2/items';
       }
       case Street.types.STOCK: {
-        return `https://qiita.com/api/v2/users/${userId}/stocks`;
+        return `https://qiita.com/api/v2/users/${this.context.userId}/stocks`;
       }
       default: {
         debugger;
