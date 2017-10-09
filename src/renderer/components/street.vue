@@ -213,17 +213,21 @@ export default {
     const source$ = Rx.Observable.create(observer => {
       const subscription = this.getItems$
         .scan((oldData, data) => {
-          console.log(data);
           if (data.type === 'CHANGE') {
             return {
               ...data,
-              items: data.items
+              items: data.items,
             };
+          } else if (data.type === 'LOAD') {
+            return {
+              ...data,
+              items: [...data.items, ...oldData.items],
+            }
           }
 
           return {
             ...data,
-            items: [...oldData.items, ...data.items]
+            items: [...oldData.items, ...data.items],
           }
         }, {items: []})
         .subscribe(({type, items, fn}) => {

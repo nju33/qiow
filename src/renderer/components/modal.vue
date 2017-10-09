@@ -4,7 +4,13 @@
     <div v-if="isDetail" class="modal__outer-box">
       <div class="modal__box">
         <ModalMenu :close$="close$" :breadclumb="breadclumb"/>
-        <QiitaContents :title="title" :headlineStack="headlineStack" :contents="contents" :close$="close$"/>
+        <QiitaContents
+          :title="title"
+          :headlineStack="headlineStack"
+          :contents="contents"
+          :comments="comments"
+          :close$="close$"
+        />
       </div>
     </div>
   </transition>
@@ -27,7 +33,8 @@ export default {
       title: '',
       headlineStack: [],
       _cacheHeadlineStack: new WeakMap(),
-      contetns: ''
+      contetns: '',
+      comments: [],
     }
   },
   computed: {
@@ -48,6 +55,7 @@ export default {
       }
       this.title = detail.title;
       this.contents = detail.renderedBody;
+      this.comments = detail.comments;
     });
 
     this.close$ = new Rx.Subject()

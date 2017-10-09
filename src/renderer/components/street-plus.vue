@@ -10,9 +10,9 @@
       >
         <img class="street-plus__img" :src="logoUrl"/>
       </div>
-      <button class="street-plus__button">
+      <!-- <button class="street-plus__button">
         <Octicon name="package" scale="1.5" :class="$theme.streetPlusIcon"/>
-      </button>
+      </button> -->
       <button ref="tagButton" class="street-plus__button">
         <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
       </button>

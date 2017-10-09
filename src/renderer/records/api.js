@@ -8,7 +8,7 @@ import Street from './street';
 export default class Api extends Record({
   type: null,
   context: {},
-  page: 1,
+  page: 2,
   perPage: 20
 }) {
   get endpoint() {

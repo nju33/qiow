@@ -49,7 +49,18 @@ export default {
   subscriptions() {
     this.showDetail$
       .pluck('data')
-      .do(data => console.log(`Detail: ${data}`))
+      .do(data => console.log('Detail:', data))
+      .switchMap(data => {
+        return Rx.Observable
+         .fromPromise(this.$http(`https://qiita.com/api/v2/items/${data.id}/comments`))
+         .pluck('data')
+         .do(data => console.log('get comments', data))
+         .map(comments => {
+           data.comments = comments;
+           return data;
+         });
+
+      })
       .map(data => ({
         type: this.showDetail$,
         fn: state => state.setDetail(data)

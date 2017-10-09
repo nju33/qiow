@@ -20,8 +20,6 @@ export default class State extends Record({
       'width',
       'title'
     ]);
-    console.log('exp');
-    console.log(R.map(pick, this.streets.toArray()));
     return {
       streets: R.map(pick, this.streets.toArray())
     }

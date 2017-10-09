@@ -29,34 +29,34 @@ export default jss.createStyleSheet({
     body: {
       background: vars.color.base
     },
-    '#qC a': {
+    '#qC a, #qCo a': {
       color: vars.color.link
     },
-    '#qC h1': {
+    '#qC h1, #qCo h1': {
       // color: vars.color.accent
     },
-    '#qC h2': {
+    '#qC h2, #qCo h2': {
       borderLeft: `2px solid ${vars.color.accent}`
     },
-    '#qC h3': {
+    '#qC h3, #qCo h3': {
       borderLeft: `1px solid`
     },
-    '#qC .code-frame': {
+    '#qC .code-frame, #qCo .code-frame': {
       background: '#282c34',
       color: '#9da5b4'
     },
-    '#qC table': {
+    '#qC table, #qCo table': {
       padding: 0,
       border: `1px solid ${'#282c34'}`
     },
-    '#qC thead': {
+    '#qC thead, #qCo thead': {
       background: '#282c34',
       color: '#9ea6b3'
     },
-    '#qC table th, $qC table td': {
+    '#qC table th, $qC table td, #qCo table th, #qCo table td': {
       border: '1px solid #282c34'
     },
-    ':root:root #qC hr': {
+    ':root:root #qC hr, :root:root #qCo hr': {
       opacity: .15,
       border: 'none',
       borderBottom: '1px solid',

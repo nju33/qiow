@@ -7,18 +7,20 @@
         v-text="title"
       />
       <div ref="contents" id="qC" v-html="transformedContents"/>
+      <Comment :items="comments"/>
     </section>
-    <div class="qiita-action">
+    <!-- <div class="qiita-action">
       <button class="qiita-action__button" :class="$theme.qiitaActionButton">
         <Octicon name="package" scale="1.3"/>
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 import Rx from 'rxjs/Rx';
 import Octicon from 'vue-octicon/components/Octicon';
+import Comment from './comment';
 import 'vue-octicon/icons/package';
 import hljs from 'highlightjs';
 import throttle from 'lodash/throttle';
@@ -29,16 +31,21 @@ import 'highlightjs/styles/atom-one-dark.css';
 export default {
   name: 'qiita-contents',
   components: {
-    Octicon
+    Octicon,
+    Comment,
   },
   props: {
     title: {
       required: true,
-      type: String
+      type: String,
     },
     contents: {
       required: true,
-      type: String
+      type: String,
+    },
+    comments: {
+      required: true,
+      type: Array,
     },
     close$: {
       required: true
@@ -178,6 +185,10 @@ export default {
     this.$data._disposables.push(headlineIOSource$.subscribe());
 
     const headlineIO = new IntersectionObserver(([entry], a) => {
+      if (typeof this.$refs.box === 'undefined') {
+        return;
+      }
+
       headlineIOSource$.next({
         boxHeight: this.$refs.box.clientHeight,
         scrollTop: this.$refs.box.scrollTop,
@@ -307,7 +318,11 @@ export default {
     });
   },
   beforeDestroy() {
-    this.$data._disposables.forEach(dispose => dispose())
+    this.$data._disposables.forEach(dispose => {
+      if (typeof dispose === 'function') {
+        dispose();
+      }
+    });
   }
 }
 </script>

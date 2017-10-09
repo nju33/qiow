@@ -40,7 +40,7 @@ export default {
   // domStreams: ['close$'],
   subscriptions() {},
   mounted() {
-    console.log(this);
+    // console.log(this);
     // debugger;
   }
 }

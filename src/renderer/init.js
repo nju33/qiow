@@ -21,10 +21,8 @@ export default (Vue) => {
     .subscribe(([config, data, user]) => {
       console.log({config,data,user});
       data.streets = data.streets.map(s => {
-        console.log(s);
         return new Street(s)
       });
-      console.log(data);
       Vue.prototype.state$.next({
         fn(state) {
           return state.merge({config, ...data, user});

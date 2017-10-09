@@ -14,7 +14,7 @@ export default class Street extends Record({
   static types = {
     TAG: 'TAG',
     SEARCH: 'SEARCH',
-    STOCK: 'STOCK'
+    STOCK: 'STOCK',
   };
 
   static findByTagId(tagId) {
