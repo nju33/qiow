@@ -254,6 +254,11 @@ export default {
                   const view = R.view(lens);
                   return view(street) === view(self.street);
                 }
+                case Street.types.STOCK: {
+                  const lens = R.lensPath(['context', 'userId']);
+                  const view = R.view(lens);
+                  return view(street) === view(self.street);
+                }
                 default: {
                   debugger;
                   throw new Error('おかしい');
@@ -324,10 +329,6 @@ export default {
       });
     })
 
-    // this.$watchAsObservable('street')
-    //   .do(function () {console.log('adfadsfasdfsfsdf')})
-    //   .do(function () {console.log(arguments)})
-    //
     this.$refs.header.addEventListener('dragover', ev => {
       this.state$.next({
         type: 'DRAGOVER',
@@ -359,8 +360,6 @@ export default {
           if (fromStreetIdx === -1 || toStreetIdx === -1) {
             return state;
           }
-
-          console.log(9999);
 
           return state.merge({
             streets: state.streets

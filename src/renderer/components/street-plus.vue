@@ -10,7 +10,7 @@
       >
         <img class="street-plus__img" :src="logoUrl"/>
       </div>
-      <!-- <button class="street-plus__button">
+      <!-- <button class="street-plus__button" v-stream:click="toggleStock$">
         <Octicon name="package" scale="1.5" :class="$theme.streetPlusIcon"/>
       </button> -->
       <button ref="tagButton" class="street-plus__button">
@@ -152,13 +152,29 @@ export default {
       };
     }
   },
-  domStreams: ['submit$'],
+  domStreams: ['toggleStock$', 'submit$'],
   subscriptions() {
     this.addStreet$ = new Rx.BehaviorSubject({data: {type: 'button'}});
+
+    this.toggleStock$
+      .do(({event}) => event.preventDefault())
+      .subscribe(() => {
+        const data = {
+          type: 'STOCK',
+          context: {
+            userId: this.user.get('id')
+          }
+        };
+        const street = new Street(data);
+        this.state$.next({
+          fn: state => state.addStreet(street)
+        })
+      });
 
     this.submit$
       .do(({event}) => event.preventDefault())
       .pluck('data')
+
       // .flatMap(() => {
       //   return Rx.Observable
       //     .from(Object.values(this.formData))
@@ -195,7 +211,6 @@ export default {
   mounted() {
     this.tagTip = tippy(this.$refs.tagButton, {
       html: this.$refs.tagForm,
-      // position: 'top-start',
       position: 'right-start',
       animation: 'shift',
       theme: 'light',
@@ -208,7 +223,6 @@ export default {
         this.form.tag = '';
       },
     });
-    // this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
 
     this.searchTip = tippy(this.$refs.searchButton, {
       html: this.$refs.searchForm,
@@ -224,7 +238,6 @@ export default {
         this.form.search = '';
       },
     });
-    // this.tagTip.show(this.tagTip.getPopperElement(this.$refs.tagButton));
   }
 }
 </script>
