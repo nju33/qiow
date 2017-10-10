@@ -12,6 +12,11 @@
         >{{item.title}}</a>
       </div>
       <div class="card__data">
+        <ul class="card__tags">
+          <li class="card__tag" v-for="tag in item.tags">
+            {{tag.name}}
+          </li>
+        </ul>
         <div class="card__user">
           <a ref="tooltip" class="user__button">
             <img class="user__img" v-lazy="item.user.profileImageUrl"/>
@@ -76,6 +81,7 @@ export default {
     }
   },
   mounted() {
+    // console.log(this.item)
   }
 }
 </script>
@@ -83,7 +89,7 @@ export default {
 <style scoped>
   .card__box {
     display: grid;
-    grid-template-rows: 1fr 1.75em;
+    grid-template-rows: 1fr 3.75em;
     grid-template-columns: 1fr;
     padding: .5em .75em;
     margin: .25em .5em;
@@ -94,8 +100,28 @@ export default {
   }
   .card__data {
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
+  }
+  .card__tags {
+    grid-row: 1;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+    font-size: .9em;
+  }
+  .card__tag {
+    margin: .3em;
+    padding: .3em;
+    background: #e3e3e3;
+  }
+  .card__user {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .card__date {
+    grid-row: 2;
+    grid-column: 2;
   }
   .card__user,
   .user__button,

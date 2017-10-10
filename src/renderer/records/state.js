@@ -21,6 +21,7 @@ export default class State extends Record({
       'title'
     ]);
     return {
+      userId: this.user && this.user.get('id'),
       streets: R.map(pick, this.streets.toArray())
     }
   }
@@ -65,6 +66,10 @@ export default class State extends Record({
 
   setList() {
 
+  }
+
+  setUser(user) {
+    return this.set('user', user);
   }
 
   setDetail(data) {
