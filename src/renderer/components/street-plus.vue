@@ -20,14 +20,16 @@
         <Octicon name="search" scale="1.2" :class="$theme.streetPlusIcon"/>
       </button>
     </div>
-    <div class="street-plus__group--bottom">
+
+    <!-- stockとか使いたくなったら実装 -->
+    <!-- <div class="street-plus__group--bottom">
       <div
         class="street-plus__logo"
         :class="$theme.streetPlusLogo"
       >
         <img class="street-plus__img" :src="user && user.get('profileImageUrl')"/>
       </div>
-    </div>
+    </div> -->
 
     <section
       ref="tagForm"

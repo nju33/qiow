@@ -5,15 +5,26 @@
     }">
       <StreetPlus :user="user"/>
 
-      <form v-if="!user" class="user-form" v-stream:submit="submit$">
+      <!-- stockとか使いたくなったら実装 -->
+      <!-- <form v-if="!user" class="user-form" v-stream:submit="submit$">
         <div class="user-form-inner">
           <label class="user-label">User ID: <input class="user-input" :class="$theme.input" /></label>
           <button class="user-submit" type="submit" :class="$theme.accentButton">Done</button>
         </div>
-      </form>
+      </form> -->
+
+      <div v-if="streets && streets.length === 0" class="placeholder">
+        <div class="placeholder__inner">
+          <div class="placeholder__content--first">
+            右にある
+            <Octicon name="tag" scale="1.3" :class="$theme.placeholderIcon"/>や<Octicon name="search" scale="1.3" :class="$theme.placeholderIcon"/>
+          </div>
+          <div>から興味のあるタグやテキストを追加できます。</div>
+        </div>
+      </div>
 
       <!-- <template v-for="tagId in followingTagIds"> -->
-      <template v-else v-for="(street, idx) in streets">
+      <template v-else-if="streets && streets.length > 0" v-for="(street, idx) in streets">
         <Separator :street="streets[idx]"/>
         <Street :street="street"/>
       </template>
@@ -25,6 +36,9 @@
 
 <script>
 import Rx from 'rxjs/Rx';
+import Octicon from 'vue-octicon/components/Octicon';
+import 'vue-octicon/icons/tag';
+import 'vue-octicon/icons/search';
 import {Map, List} from 'immutable';
 import UserBoard from './user-board';
 import Street from './street';
@@ -39,6 +53,7 @@ export default {
   },
   name: 'board',
   components: {
+    Octicon,
     UserBoard,
     Street,
     StreetPlus,
@@ -142,5 +157,32 @@ export default {
   margin-left: auto;
   font-size: 1em;
   cursor: pointer;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  max-width: calc(100vw - 69px);
+  min-width: calc(100vw - 69px);
+}
+
+.placeholder__inner {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.placeholder__content--first {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: .5em 0;
+}
+
+.octicon {
+  padding: .5em;
+  margin: 0 .5em;
+  border-radius: 50%;
 }
 </style>

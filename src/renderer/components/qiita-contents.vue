@@ -209,6 +209,42 @@ export default {
         this.$refs.contents.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(elem => {
           headlineIO.observe(elem);
         });
+
+        const addEventListenerForA = (() => {
+          // const openLink$ = new Rx.Subject()
+          // const source$ = openLink$
+          //   .map(data => ({
+          //     type: openLink$,
+          //     fn(state) {
+          //       return Object.assign({}, state, {
+          //         webview: data
+          //       });
+          //     }
+          //   }));
+          //
+          const handleOpenLink = ev => {
+            ev.preventDefault();
+            const link = ev.target.getAttribute('href');
+            this.$electron.shell.openExternal(link);
+            // const link = ev.target.getAttribute('href');
+            // source$.next({
+            //   src: link
+            // });
+          }
+
+          return a => {
+            a.addEventListener('click', handleOpenLink);
+            return () => {
+              a.removeEventListener('click', handleOpenLink);
+            }
+          }
+        })();
+
+        const anchors = this.$refs.contents.querySelectorAll('#qC a[href]');
+        Array.from(anchors).forEach(a => {
+          const dispose = addEventListenerForA(a);
+          this.$data._disposables.push(dispose);
+        });
       }, 0);
     });
 
@@ -283,39 +319,6 @@ export default {
         this.$refs.box.scrollTop = height;
       });
     this.$data._disposables.push(keybindSource$.subscribe());
-
-
-    const addEventListenerForA = (() => {
-      const openLink$ = new Rx.Subject()
-      const source$ = openLink$
-        .map(data => ({
-          type: openLink$,
-          fn(state) {
-            return Object.assign({}, state, {
-              webview: data
-            });
-          }
-        }));
-
-      return a => {
-        a.addEventListener('click', handleOpenLink);
-        return () => {
-          a.removeEventListener('click', handleOpenLink);
-        }
-      }
-
-      function handleOpenLink(ev) {
-        const link = ev.target.getAttribute('href');
-        source$.next({
-          src: link
-        });
-      }
-    })();
-    const anchors = this.$refs.contents.querySelectorAll('a[href]');
-    anchors.forEach(a => {
-      const dispose = addEventListenerForA(a);
-      this.$data._disposables.push(dispose);
-    });
   },
   beforeDestroy() {
     this.$data._disposables.forEach(dispose => {

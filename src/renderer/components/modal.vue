@@ -3,7 +3,7 @@
     <!-- <div v-if="isDetail" class="modal__outer-box" v-stream:click="close$"> -->
     <div v-if="isDetail" class="modal__outer-box">
       <div class="modal__box">
-        <ModalMenu :close$="close$" :breadclumb="breadclumb"/>
+        <ModalMenu :close$="close$" :breadclumb="breadclumb" :url="url"/>
         <QiitaContents
           :title="title"
           :headlineStack="headlineStack"
@@ -31,6 +31,7 @@ export default {
     return {
       isDetail: false,
       title: '',
+      url: '',
       headlineStack: [],
       _cacheHeadlineStack: new WeakMap(),
       contetns: '',
@@ -54,6 +55,7 @@ export default {
         return;
       }
       this.title = detail.title;
+      this.url = detail.url;
       this.contents = detail.renderedBody;
       this.comments = detail.comments;
     });

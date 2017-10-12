@@ -13,7 +13,10 @@
       </div>
       <div class="card__data">
         <ul class="card__tags">
-          <li class="card__tag" v-for="tag in item.tags">
+          <li class="card__tag" v-for="tag in item.tags" v-stream:click="{
+            subject: addStreet$,
+            data: tag
+          }">
             {{tag.name}}
           </li>
         </ul>
@@ -36,6 +39,7 @@
 
 <script>
 import Rx from 'rxjs/Rx';
+import Street from '../records/street';
 import timeago from 'timeago.js';
 import UserTooltip from './user-tooltip';
 
@@ -50,7 +54,7 @@ export default {
       required: true
     }
   },
-  domStreams: ['showDetail$'],
+  domStreams: ['showDetail$', 'addStreet$'],
   subscriptions() {
     this.showDetail$
       .pluck('data')
@@ -64,12 +68,28 @@ export default {
            data.comments = comments;
            return data;
          });
-
       })
       .map(data => ({
         type: this.showDetail$,
         fn: state => state.setDetail(data)
       }))
+      .subscribe(this.state$);
+
+    this.addStreet$
+      .pluck('data')
+      .map(tag => {
+        const street = new Street({
+          type: 'TAG',
+          context: {
+            tagId: tag.name
+          }
+        });
+        return {
+          fn: state => {
+            return state.addStreet(street);
+          }
+        };
+      })
       .subscribe(this.state$);
 
     return {
@@ -80,16 +100,13 @@ export default {
       return timeago().format(date);
     }
   },
-  mounted() {
-    // console.log(this.item)
-  }
 }
 </script>
 
 <style scoped>
   .card__box {
     display: grid;
-    grid-template-rows: 1fr 3.75em;
+    grid-template-rows: 1fr 4.25em;
     grid-template-columns: 1fr;
     padding: .5em .75em;
     margin: .25em .5em;
@@ -108,16 +125,24 @@ export default {
     grid-column-start: 1;
     grid-column-end: 3;
     display: flex;
-    font-size: .9em;
+    font-size: .85em;
+    overflow: auto;
   }
   .card__tag {
     margin: .3em;
-    padding: .3em;
+    padding: .15em .5em;
     background: #e3e3e3;
+    line-height: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .card__tag:first-child {
+    margin-left: 0;
   }
   .card__user {
     grid-row: 2;
     grid-column: 1;
+    padding-left: 3px;
   }
   .card__date {
     grid-row: 2;

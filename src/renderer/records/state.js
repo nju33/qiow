@@ -38,10 +38,23 @@ export default class State extends Record({
     return this.set('route', 'detail');
   }
 
-  addStreet(data) {
-    const street = new Street(data);
-    return this.streets.unshift(street);
-  }
+  // addStreet(data) {
+  //   const street = new Street(data);
+  //   // if (!this.streets.find(_street => {
+  //   //   if (street.type === 'TAG') {
+  //   //     return street.context.tagId === _street.context.tagId;
+  //   //   } else if (street.type === 'SEARCH') {
+  //   //     return street.context.searchText === _street.context.searchText;
+  //   //   } else if (street.type === 'STOCK') {
+  //   //     return street.context.userId === _street.context.userId;
+  //   //   } else {
+  //   //     return false;
+  //   //   }
+  //   // })) {
+  //   //   return this.streets.unshift(street);
+  //   // }
+  //   return this.streets;
+  // }
 
   findStreet(street) {
     switch (street.type) {
@@ -82,10 +95,25 @@ export default class State extends Record({
     if (!(street instanceof Street)) {
       throw new Error(`Not a value of Street: ${street}`);
     }
+
+    if (!this.streets.find(_street => {
+      if (street.type === 'TAG') {
+        return street.context.tagId === _street.context.tagId;
+      } else if (street.type === 'SEARCH') {
+        return street.context.searchText === _street.context.searchText;
+      } else if (street.type === 'STOCK') {
+        return street.context.userId === _street.context.userId;
+      } else {
+        return false;
+      }
+    })) {
+      return this.set('streets', this.streets.push(street));
+    }
+
     /**
      * vue-rxの問題なのかsource$がアップデートされないためpush
      */
-    return this.set('streets', this.streets.push(street));
+    return this;
   }
 
   addStreetItems(tagId, items) {

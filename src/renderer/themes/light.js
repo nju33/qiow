@@ -85,6 +85,11 @@ export default jss.createStyleSheet({
     background: '#565656',
     border: `1px dotted ${vars.color.accent}`
   },
+  placeholderIcon: {
+    background: '#565656',
+    border: `3px solid ${vars.color.accentSub}`,
+    fill: '#fff !important',
+  },
   streetPlusBox: {
     background: '#565656',
     // background: vars.color.accent,

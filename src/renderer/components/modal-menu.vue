@@ -3,10 +3,19 @@
     <div class="modal-menu__group">
       <ul class="breadclumb__list">
         <template  v-for="(item, idx) in breadclumb">
+
         <li
+          v-if="idx === 0"
+          v-on:click="open(url)"
           class="breadclumb__item"
           :class="idx === 0 && $theme.breadclumbItemFirst"
         >{{item}}</li>
+        <li
+          v-else
+          class="breadclumb__item"
+          :class="idx === 0 && $theme.breadclumbItemFirst"
+        >{{item}}</li>
+
         <span class="breadclumb__separator" v-if="idx < breadclumb.length - 1">
           <Octicon name="chevron-right"/>
         </span>
@@ -29,19 +38,22 @@ export default {
   name: 'modal-menu',
   components: {Octicon},
   props: {
+    url: {
+      type: String,
+      required: true,
+    },
     breadclumb: {
       type: Array,
-      required: true
+      required: true,
     },
     close$: {
       required: true
     }
   },
-  // domStreams: ['close$'],
-  subscriptions() {},
-  mounted() {
-    // console.log(this);
-    // debugger;
+  methods: {
+    open(url) {
+      this.$electron.shell.openExternal(url);
+    }
   }
 }
 </script>
