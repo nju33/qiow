@@ -13,7 +13,7 @@
         </div>
       </form> -->
 
-      <div v-if="streets && streets.length === 0" class="placeholder">
+      <div v-if="!streets || (streets && streets.length === 0)" class="placeholder">
         <div class="placeholder__inner">
           <div class="placeholder__content--first">
             右にある

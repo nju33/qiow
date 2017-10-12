@@ -194,6 +194,10 @@ export default {
                   return state;
                 }
 
+                new Notification(`Updated ${self.street.title}`, {
+                  silent: true,
+                });
+
                 const nextStreet = street.addItemsIntoHead(items);
                 return state.merge({
                   type,
@@ -238,6 +242,16 @@ export default {
       this.getItems$.next({type: 'INIT'});
     });
 
+    Rx.Observable
+      .interval(1000)
+      .takeWhile(x => x < 1)
+      .subscribe(() => {
+        this.getItems$.next({
+          type: 'LOAD',
+          ctx: {resolve() {}},
+        });
+      });
+
     (() => {
       const subscription = this.delete$
         .subscribe(() => {
@@ -251,11 +265,6 @@ export default {
                 }
                 case Street.types.SEARCH: {
                   const lens = R.lensPath(['context', 'searchText']);
-                  const view = R.view(lens);
-                  return view(street) === view(self.street);
-                }
-                case Street.types.STOCK: {
-                  const lens = R.lensPath(['context', 'userId']);
                   const view = R.view(lens);
                   return view(street) === view(self.street);
                 }
@@ -329,6 +338,10 @@ export default {
       });
     })
 
+    // this.$watchAsObservable('street')
+    //   .do(function () {console.log('adfadsfasdfsfsdf')})
+    //   .do(function () {console.log(arguments)})
+    //
     this.$refs.header.addEventListener('dragover', ev => {
       this.state$.next({
         type: 'DRAGOVER',
@@ -360,6 +373,8 @@ export default {
           if (fromStreetIdx === -1 || toStreetIdx === -1) {
             return state;
           }
+
+          console.log(9999);
 
           return state.merge({
             streets: state.streets

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "author": "nju33 <nju33.ki@gmail.com>",
   "description": "qiita client",
-  "license": null,
+  "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && build",
@@ -19,7 +19,7 @@
   },
   "build": {
     "productName": "qiow",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "qiow",
     "directories": {
       "output": "build"
     },

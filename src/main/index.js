@@ -1,5 +1,6 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import {transformContents} from './helpers';
+import './menu';
 
 /**
  * Set `__static` path to static files in production

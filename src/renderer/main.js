@@ -47,9 +47,7 @@ if (process.env.NODE_ENV !== 'production') {
     .do(state => console.log('Next: ', state))
     .subscribe(state => {
       this.$store = state;
-      if (state.streets.size > 0) {
-        saveData(state.export());
-      }
+      saveData(state.export());
     })
 }
 
