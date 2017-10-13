@@ -3,9 +3,9 @@
     <div class="scroller" :style="{
       width: width + 'px'
     }">
-      <StreetPlus :user="user"/>
+      <!-- <StreetPlus :user="user"/> -->
+      <StreetPlus/>
 
-      <!-- stockとか使いたくなったら実装 -->
       <!-- <form v-if="!user" class="user-form" v-stream:submit="submit$">
         <div class="user-form-inner">
           <label class="user-label">User ID: <input class="user-input" :class="$theme.input" /></label>
@@ -13,7 +13,10 @@
         </div>
       </form> -->
 
-      <div v-if="!streets || (streets && streets.length === 0)" class="placeholder">
+      <div
+        v-if="streets && streets.length === 0"
+        class="placeholder"
+      >
         <div class="placeholder__inner">
           <div class="placeholder__content--first">
             右にある
@@ -23,8 +26,10 @@
         </div>
       </div>
 
-      <!-- <template v-for="tagId in followingTagIds"> -->
-      <template v-else-if="streets && streets.length > 0" v-for="(street, idx) in streets">
+      <template
+        v-else-if="streets && streets.length > 0"
+        v-for="(street, idx) in streets"
+      >
         <Separator :street="streets[idx]"/>
         <Street :street="street"/>
       </template>
@@ -59,33 +64,37 @@ export default {
     StreetPlus,
     Separator
   },
-  domStreams: ['submit$'],
+  // domStreams: ['submit$'],
   subscriptions() {
-    this.submit$
-      .do(({event}) => {event.preventDefault()})
-      .switchMap(({event}) => {
-        const input = event.target[0];
-        if (input.value === '') {
-          return Rx.Observable.never();
-        }
-        return Rx.Observable.of(input.value);
-      })
-      .switchMap(userId => {
-        return Rx.Observable
-         .fromPromise(this.$http(`https://qiita.com/api/v2/users/${userId}`))
-      })
-      .pluck('data')
-      .subscribe(
-        user => {
-          this.state$.next({
-            type: 'SET_USER_ID',
-            fn: state => state.setUser(Map(camelcaseKeys(user))),
-          });
-        }
-      );
+    // this.submit$
+    //   .do(({event}) => {event.preventDefault()})
+    //   .switchMap(({event}) => {
+    //     const input = event.target[0];
+    //     if (input.value === '') {
+    //       return Rx.Observable.never();
+    //     }
+    //     return Rx.Observable.of(input.value);
+    //   })
+    //   .switchMap(userId => {
+    //     return Rx.Observable
+    //      .fromPromise(this.$http(`https://qiita.com/api/v2/users/${userId}`))
+    //   })
+    //   .pluck('data')
+    //   .subscribe(
+    //     user => {
+    //       this.state$.next({
+    //         type: 'SET_USER_ID',
+    //         fn: state => state.setUser(Map(camelcaseKeys(user))),
+    //       });
+    //     }
+    //   );
+
+    this.state$.next({
+      fn: state => state,
+    });
 
     return {
-      user: this.state$.pluck('user'),
+      // user: this.state$.pluck('user'),
       streets: this.state$
         .pluck('streets')
         .map(streets => streets.toArray()),

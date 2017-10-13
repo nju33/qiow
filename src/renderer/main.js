@@ -29,16 +29,22 @@ Vue.config.productionTip = false;
 
 const storeSubject$ = new Rx.ReplaySubject(1)
   .scan(function (state, {fn}) {
-    return fn(state);
+    try {
+      return fn(state);
+    } catch (err) {
+      console.error(err)
+      return state;
+    }
   }, null)
   .pairwise()
   .switchMap(([prevState, state]) => {
-    console.log(prevState === state);
+    console.log('update', prevState === state);
     if (prevState === state) {
       return Rx.Observable.never();
     }
     return Rx.Observable.of(state);
-  });
+  })
+  .do(state => {console.log('state', state)});
 Vue.prototype.state$ = storeSubject$.share();
 
 

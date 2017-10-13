@@ -131,7 +131,7 @@ export default {
   },
   props: {
     user: {
-      required: true
+      // required: true
     }
   },
   data() {
@@ -188,21 +188,24 @@ export default {
         }
         return Rx.Observable.never();
       })
-      .subscribe(instanceData => {
+      .map(instanceData => {
         const street = new Street(instanceData);
-        console.log(street);
         // TODO:
         this.form.tag = '';
         this.form.search = '';
-        this.state$.next({
-          fn: state => state.addStreet(street)
-            // return nextState;
-        })
+
+        return {
+          fn: state => {
+            return state.addStreet(street);
+          }
+        }
+
         // });
         // setTimeout(() => {
         //   this.addStreet$.next({data: {type: 'button'}});
         // }, 0);
-      });
+      })
+      .subscribe(this.state$);
 
     return {
       type: this.addStreet$

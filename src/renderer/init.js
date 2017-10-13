@@ -43,7 +43,7 @@ export default (Vue) => {
       return new Street(s)
     });
 
-    if (data && data.userId) {
+    if (data && ({}).hasOwnProperty.call(data, 'userId')) {
       delete data.userId;
     }
 
