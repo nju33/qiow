@@ -1,6 +1,17 @@
 <template>
   <div id="root" class="box">
-    <div class="scroller" :style="{
+
+    <template v-if="mounted && token === undefined">
+      <form class="user-form" v-stream:submit="setToken$">
+        <div class="user-form-inner" style="position:relative;padding-top:8em">
+          <img src="static/logo.svg" style="width: 120px;position:absolute;top:-6em;right:48%;transform:translateX(50%)"/>
+          <label class="user-label"><div style="margin-left: 10px;margin-bottom: 5px;">AccessToken:</div><input class="user-input" :class="$theme.input" style="width: 400px"/></label>
+          <button class="user-submit" type="submit" :class="$theme.accentButton">Done</button>
+        </div>
+      </form>
+    </template>
+
+    <div v-else-if="mounted" class="scroller" :style="{
       width: width + 'px'
     }">
       <!-- <StreetPlus :user="user"/> -->
@@ -40,6 +51,8 @@
 </template>
 
 <script>
+import Vue from 'vue';
+import axios from 'axios';
 import Rx from 'rxjs/Rx';
 import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/tag';
@@ -64,7 +77,13 @@ export default {
     StreetPlus,
     Separator
   },
+  data() {
+    return {
+      mounted: false,
+    };
+  },
   // domStreams: ['submit$'],
+  domStreams: ['setToken$'],
   subscriptions() {
     // this.submit$
     //   .do(({event}) => {event.preventDefault()})
@@ -89,12 +108,40 @@ export default {
     //     }
     //   );
 
+    this.setToken$
+      .do(({event}) => {event.preventDefault()})
+      .switchMap(({event}) => {
+        const input = event.target[0];
+        if (input.value === '') {
+          return Rx.Observable.never();
+        }
+        return Rx.Observable.of(input.value);
+      })
+      .subscribe(
+        token => {
+          this.state$.next({
+            type: 'TOKEN',
+            fn: state => state.setToken(token),
+          });
+
+          Vue.http = Vue.prototype.$http = axios.create({
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+        }
+      );
+
+    // setTimeout(() => {
+      // console.log(9)
     this.state$.next({
-      fn: state => state,
+      fn: state => state.forceUpdate(),
     });
+    // }, 0)
 
     return {
       // user: this.state$.pluck('user'),
+      token: this.state$.pluck('token'),
       streets: this.state$
         .pluck('streets')
         .map(streets => streets.toArray()),
@@ -109,6 +156,9 @@ export default {
   methods: {
   },
   mounted() {
+    setTimeout(() => {
+      this.mounted = true;
+    }, 500);
   }
 }
 </script>

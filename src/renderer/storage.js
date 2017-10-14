@@ -33,3 +33,16 @@ export async function saveData(data) {
     throw new Error(err);
   }
 }
+
+export async function loadToken() {
+  const {token} = await storage.get('token');
+  return token || undefined;
+}
+
+export async function saveToken(token) {
+  try {
+    await storage.set('token', {token});
+  } catch (err) {
+    throw new Error(err);
+  }
+}

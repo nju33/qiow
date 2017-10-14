@@ -6,6 +6,7 @@ export default class State extends Record({
   _id: 0,
   type: null,
   route: 'list',
+  token: null,
   streets: List(),
   control: Map(),
   detail: null,
@@ -15,6 +16,7 @@ export default class State extends Record({
 }) {
   export() {
     const pick = R.pick([
+      'token',
       'type',
       'context',
       'width',
@@ -117,5 +119,9 @@ export default class State extends Record({
     }
     this.set('streets', this.streets.delete(idx));
     return this;
+  }
+
+  setToken(token) {
+    return this.set('token', token);
   }
 }

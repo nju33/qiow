@@ -9,7 +9,7 @@ import axios from 'axios';
 import App from './App';
 import router from './router';
 import store from './store';
-import {loadData, saveData} from './storage';
+import {loadData, saveData, loadToken, saveToken} from './storage';
 import State from './records/state';
 import Street from './records/street';
 import themes from './themes';
@@ -18,77 +18,95 @@ import init from './init';
 smoothscroll.polyfill();
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
-// const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
-const http = axios.create({
-  // headers: {
-  //   Authorization: `Bearer ${token}`
-  // }
-})
-Vue.http = Vue.prototype.$http = http;
-Vue.config.productionTip = false;
+runApp();
 
-const storeSubject$ = new Rx.ReplaySubject(1)
-  .scan(function (state, {fn}) {
-    try {
-      return fn(state);
-    } catch (err) {
-      console.error(err)
-      return state;
-    }
-  }, new State())
-  .pairwise()
-  .switchMap(([prevState, state]) => {
-    console.log('update', prevState === state);
-    if (prevState === state) {
-      return Rx.Observable.never();
-    }
-    return Rx.Observable.of(state);
-  })
-  .do(state => {console.log('state', state)});
-Vue.prototype.state$ = storeSubject$.share();
-
-
-Vue.prototype.state$
-  .do(state => console.log('Next: ', state))
-  .subscribe(state => {
-    this.$store = state;
-    saveData(state.export());
-  })
-
-Vue.prototype.state$.next({
-  fn() {
-    return new State({
-      // streets: new List([
-      //   new Street({
-      //     type: 'TAG',
-      //     context: {tagId: 'nodejs'}
-      //   }),
-      //   new Street({
-      //     type: 'TAG',
-      //     context: {tagId: 'javascript'}
-      //   }),
-      //   new Street({
-      //     type: 'SEARCH',
-      //     context: {searchText: 'aws'}
-      //   })
-      // ])
+async function runApp() {
+  const token = await loadToken();
+  // const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
+  if (token !== undefined) {
+    Vue.http = Vue.prototype.$http = axios.create({
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
+  } else {
+    Vue.http = Vue.prototype.$http = axios.create();
   }
-});
+  Vue.config.productionTip = false;
 
-init(Vue);
+  const storeSubject$ = new Rx.ReplaySubject(1)
+    .scan(function (state, {type, fn}) {
+      console.log(state)
+      try {
+        const nextState = fn(state);
+        if (type === 'TOKEN') {
+          saveToken(nextState.token);
+        }
+        return nextState;
+      } catch (err) {
+        console.error(err)
+        return state;
+      }
+    }, new State({
+      token,
+    }))
+    .pairwise()
+    .switchMap(([prevState, state]) => {
+      console.log('update', prevState === state);
+      if (prevState === state) {
+        return Rx.Observable.never();
+      }
+      return Rx.Observable.of(state);
+    })
+    .do(state => {console.log('state', state)});
+  Vue.prototype.state$ = storeSubject$.share();
 
-Vue.prototype.$themename = 'light';
-Vue.prototype.$theme = (() => {
-  const {classes} = themes.light.attach();
-  return classes;
-})();
 
-Vue.use(VueRx, Rx);
-Vue.use(VueLazyload);
-new Vue({
-  components: {App},
-  router,
-  // store,
-  template: '<App/>'
-}).$mount('#app');
+  Vue.prototype.state$
+    .do(state => console.log('Next: ', state))
+    .subscribe(state => {
+      if (this) {
+        this.$store = state;
+      }
+      saveData(state.export());
+    })
+
+  // Vue.prototype.state$.next({
+  //   token,
+  //   // fn() {
+  //   //   return new State({
+  //   //     streets: new List([
+  //   //       new Street({
+  //   //         type: 'TAG',
+  //   //         context: {tagId: 'nodejs'}
+  //   //       }),
+  //   //       new Street({
+  //   //         type: 'TAG',
+  //   //         context: {tagId: 'javascript'}
+  //   //       }),
+  //   //       new Street({
+  //   //         type: 'SEARCH',
+  //   //         context: {searchText: 'aws'}
+  //   //       })
+  //   //     ])
+  //   //   });
+  //   // }
+  // });
+
+  init(Vue);
+
+  Vue.prototype.$themename = 'light';
+  Vue.prototype.$theme = (() => {
+    const {classes} = themes.light.attach();
+    return classes;
+  })();
+
+  Vue.use(VueRx, Rx);
+  Vue.use(VueLazyload);
+  new Vue({
+    components: {App},
+    router,
+    // store,
+    template: '<App/>'
+  }).$mount('#app');
+}
