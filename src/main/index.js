@@ -1,6 +1,5 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import {transformContents} from './helpers';
-import './menu';
 
 /**
  * Set `__static` path to static files in production
@@ -24,12 +23,12 @@ function createWindow () {
     useContentSize: true,
     width: 1000
   })
-
   mainWindow.loadURL(winURL)
-
   mainWindow.on('closed', () => {
     mainWindow = null
-  })
+  });
+
+  require('./menu');
 }
 
 app.on('ready', createWindow)

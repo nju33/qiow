@@ -7,7 +7,7 @@ export default class Street extends Record({
   context: {},
   width: 400,
   title: null,
-  tid: null,
+  // tid: null,
   items: List(),
   api: null,
 }) {

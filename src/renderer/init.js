@@ -20,6 +20,9 @@ export default (Vue) => {
   )
   .switchMap(([config, data]) => {
     if (data && data.userId) {
+      /**
+       * 今は使ってないけど残しとく
+       */
       const user$ = Rx.Observable.fromPromise(
         Vue.prototype.$http(`https://qiita.com/api/v2/users/${data.userId}`)
       )

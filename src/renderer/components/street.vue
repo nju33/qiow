@@ -116,7 +116,7 @@ export default {
       }
     }
   },
-  domStreams: ['scroll$', 'delete$'],
+  domStreams: [/* 'scroll$' */, 'delete$'],
   subscriptions() {
     const self = this;
     this.subscriptions = [];
@@ -242,15 +242,6 @@ export default {
       this.getItems$.next({type: 'INIT'});
     });
 
-    Rx.Observable
-      .interval(1000)
-      .takeWhile(x => x < 1)
-      .subscribe(() => {
-        this.getItems$.next({
-          type: 'LOAD',
-          ctx: {resolve() {}},
-        });
-      });
 
     (() => {
       const subscription = this.delete$
@@ -289,8 +280,42 @@ export default {
     })();
 
     (() => {
-      const subscription = this.scroll$
+      const intervalSubject$ = new Rx.Subject();
+
+      const interval$ = new Rx.Observable(observer => {
+        let tid = null;
+        /**
+         * 5分に一度データを取得する
+         */
+        const reserveLoad = () => {
+          return setTimeout(() => {
+            console.log('Try LOAD');
+            this.getItems$.next({
+              type: 'LOAD',
+              ctx: {resolve() {}},
+            });
+            observer.next();
+            tid = reserveLoad();
+          }, 50000);
+        }
+
+        tid = reserveLoad();
+
+        intervalSubject$
+          .subscribe(next => {
+            if (next.type !== 'LOAD') {
+              clearTimeout(tid);
+              tid = reserveLoad();
+            }
+          })
+      });
+
+      this.scroll$ = new Rx.Subject();
+      const scroll$ = this.scroll$
         .throttleTime(50)
+        .do(() => {
+          intervalSubject$.next({type: 'NEXT'});
+        })
         .debounceTime(50)
         .map(({event}) => {
           const {scrollHeight, scrollTop, clientHeight} = event.target;
@@ -318,7 +343,11 @@ export default {
           }
           return Rx.Observable.never();
         })
-        .subscribe();
+
+      const subscription = Rx.Observable.race(
+        interval$,
+        scroll$,
+      ).subscribe();
       this.subscriptions.push(subscription);
     })();
 
@@ -338,10 +367,6 @@ export default {
       });
     })
 
-    // this.$watchAsObservable('street')
-    //   .do(function () {console.log('adfadsfasdfsfsdf')})
-    //   .do(function () {console.log(arguments)})
-    //
     this.$refs.header.addEventListener('dragover', ev => {
       this.state$.next({
         type: 'DRAGOVER',
@@ -373,8 +398,6 @@ export default {
           if (fromStreetIdx === -1 || toStreetIdx === -1) {
             return state;
           }
-
-          console.log(9999);
 
           return state.merge({
             streets: state.streets

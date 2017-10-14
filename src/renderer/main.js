@@ -18,11 +18,11 @@ import init from './init';
 smoothscroll.polyfill();
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
-const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
+// const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
 const http = axios.create({
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
+  // headers: {
+  //   Authorization: `Bearer ${token}`
+  // }
 })
 Vue.http = Vue.prototype.$http = http;
 Vue.config.productionTip = false;
@@ -35,7 +35,7 @@ const storeSubject$ = new Rx.ReplaySubject(1)
       console.error(err)
       return state;
     }
-  }, null)
+  }, new State())
   .pairwise()
   .switchMap(([prevState, state]) => {
     console.log('update', prevState === state);
@@ -48,14 +48,12 @@ const storeSubject$ = new Rx.ReplaySubject(1)
 Vue.prototype.state$ = storeSubject$.share();
 
 
-if (process.env.NODE_ENV !== 'production') {
-  Vue.prototype.state$
-    .do(state => console.log('Next: ', state))
-    .subscribe(state => {
-      this.$store = state;
-      saveData(state.export());
-    })
-}
+Vue.prototype.state$
+  .do(state => console.log('Next: ', state))
+  .subscribe(state => {
+    this.$store = state;
+    saveData(state.export());
+  })
 
 Vue.prototype.state$.next({
   fn() {
