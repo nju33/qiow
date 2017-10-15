@@ -1,8 +1,12 @@
 # qiow
 
-> qiita client
+An app of the Qiita for viewing widely
 
-#### Build Setup
+## Articles
+
+- [qiita(ja)](http://qiita.com/nju33/items/b54fe4fcaced2e0328dc)
+
+## Build Setup
 
 ``` bash
 # install dependencies
