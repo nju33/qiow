@@ -1,6 +1,10 @@
 import prettier from 'prettier';
 
 export default function format(codeData) {
-  codeData.code = prettier.format(codeData.code);
+  try {
+    codeData.code = prettier.format(codeData.code);
+  } catch (_) {
+    return codeData;
+  }
   return codeData;
 }
