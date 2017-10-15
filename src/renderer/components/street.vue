@@ -291,7 +291,7 @@ export default {
          */
         const reserveLoad = () => {
           return setTimeout(() => {
-            // console.log('Try LOAD');
+            console.log('Try LOAD');
             this.getItems$.next({
               type: 'LOAD',
               ctx: {resolve() {}},
@@ -346,11 +346,13 @@ export default {
           return Rx.Observable.never();
         })
 
-      const subscription = Rx.Observable.race(
-        interval$,
-        scroll$,
-      ).subscribe();
-      this.subscriptions.push(subscription);
+      // const subscription = Rx.Observable.race(
+      //   interval$,
+      //   scroll$,
+      // ).subscribe();
+      // const
+      this.subscriptions.push(interval$.subscribe());
+      this.subscriptions.push(scroll$.subscribe());
     })();
 
     return {
