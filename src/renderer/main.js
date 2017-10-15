@@ -52,7 +52,6 @@ async function runApp() {
     }))
     .pairwise()
     .switchMap(([prevState, state]) => {
-      console.log('update', prevState === state);
       if (prevState === state) {
         return Rx.Observable.never();
       }

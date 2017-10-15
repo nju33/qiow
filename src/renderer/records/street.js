@@ -42,6 +42,7 @@ export default class Street extends Record({
   }
 
   isChanged(items) {
+    // console.log('asldsljdfa', items)
     const item = this.getIn(['items', 0]);
     if (typeof item === 'undefined') {
       return true;

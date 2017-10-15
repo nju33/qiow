@@ -65,6 +65,8 @@ import Street from '../records/street';
 import Card from './card';
 import Loading from './loading';
 
+const uniqById = R.uniqBy(item => item.id);
+
 export default {
   components: {
     Octicon,
@@ -225,13 +227,13 @@ export default {
           } else if (data.type === 'LOAD') {
             return {
               ...data,
-              items: [...data.items, ...oldData.items],
+              items: uniqById([...data.items, ...oldData.items]),
             }
           }
 
           return {
             ...data,
-            items: [...oldData.items, ...data.items],
+            items: uniqById([...oldData.items, ...data.items]),
           }
         }, {items: []})
         .subscribe(({type, items, fn}) => {
@@ -289,7 +291,7 @@ export default {
          */
         const reserveLoad = () => {
           return setTimeout(() => {
-            console.log('Try LOAD');
+            // console.log('Try LOAD');
             this.getItems$.next({
               type: 'LOAD',
               ctx: {resolve() {}},
