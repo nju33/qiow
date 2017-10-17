@@ -30,10 +30,12 @@
       >
         <div class="placeholder__inner">
           <div class="placeholder__content--first">
-            右にある
-            <Octicon name="tag" scale="1.3" :class="$theme.placeholderIcon"/>や<Octicon name="search" scale="1.3" :class="$theme.placeholderIcon"/>
+            <div :class="$theme.placeholderText"> 右にある </div>
+            <Octicon name="tag" scale="1.3" :class="$theme.placeholderIcon"/>
+	    <div :class="$theme.placeholderText">や</div>
+	    <Octicon name="search" scale="1.3" :class="$theme.placeholderIcon"/>
           </div>
-          <div>から興味のあるタグやテキストを追加できます。</div>
+          <div :class="$theme.placeholderText">から興味のあるタグやテキストを追加できます。</div>
         </div>
       </div>
 

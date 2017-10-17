@@ -4,7 +4,6 @@
       <div class="card__title">
         <a
           class="title"
-          style="color:#005CAF"
           v-stream:click="{
             subject: showDetail$,
             data: item
@@ -135,6 +134,7 @@ export default {
     line-height: 15px;
     border-radius: 10px;
     cursor: pointer;
+    color: #000000;
   }
   .card__tag:first-child {
     margin-left: 0;

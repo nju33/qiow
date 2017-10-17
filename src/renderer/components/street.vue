@@ -11,10 +11,10 @@
       ref="header"
     >
       <div class="header__left"></div>
-      <h3 class="header__title">{{street.title}}</h3>
+      <h3 :class="$theme.headerTitle">{{street.title}}</h3>
       <div class="header__right">
         <button
-          class="header__button"
+          class="header__button" :class="$theme.headerButton"
           v-stream:click="delete$"
         >
           <Octicon name="x"/>
@@ -433,10 +433,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-  }
-  .header__title {
-    text-align: center;
-    padding: .5em;
   }
   .header__button {
     border: none;
