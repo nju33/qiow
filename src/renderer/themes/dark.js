@@ -137,9 +137,9 @@ export default jss.createStyleSheet({
     }
   },
   card: {
-    border: '1px solid #818896',
+    border: '1px solid #444444',
     background: '#282c34',
-    color: 'rgb(255,255,255)',
+    color: '#dcdcdc',
     
     '& .card__data': {
       color: 'rgba(255,255,255,.7)'
