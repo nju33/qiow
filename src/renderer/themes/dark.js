@@ -145,6 +145,15 @@ export default jss.createStyleSheet({
       color: 'rgba(255,255,255,.7)'
     }
   },
+  cardTag: {
+    margin: '.3em',
+    padding: '.15em .5em',
+    background: '#000',
+    lineHeight: '15px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    color: '#9da5b4',
+  },
   loadingIcon: {
     fill: vars.color.accent
   },
