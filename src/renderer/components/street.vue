@@ -287,7 +287,7 @@ export default {
       const interval$ = new Rx.Observable(observer => {
         let tid = null;
         /**
-         * 5分に一度データを取得する
+         * 3分に一度データを取得する
          */
         const reserveLoad = () => {
           return setTimeout(() => {
@@ -298,7 +298,7 @@ export default {
             });
             observer.next();
             tid = reserveLoad();
-          }, 50000);
+          }, 1000 * 60 * 3);
         }
 
         tid = reserveLoad();
