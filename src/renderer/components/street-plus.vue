@@ -21,6 +21,18 @@
       </button>
     </div>
 
+    <div class="street-plus__group--bottom">
+      <button ref="configButton" class="street-plus__button">
+        <Octicon name="gear" scale="1.5" :class="$theme.streetPlusIcon"/>
+      </button>
+      <!-- <div
+        class="street-plus__logo"
+        :class="$theme.streetPlusLogo"
+      >
+        <img class="street-plus__img" :src="user && user.get('profileImageUrl')"/>
+      </div> -->
+    </div>
+
     <!-- stockとか使いたくなったら実装 -->
     <!-- <div class="street-plus__group--bottom">
       <div
@@ -70,6 +82,7 @@
         </div>
       </form>
     </section>
+
     <section
       ref="searchForm"
     >
@@ -109,6 +122,76 @@
         </div>
       </form>
     </section>
+
+    <section
+      ref="configForm"
+    >
+      <div
+        class="street-plus__form"
+        style="
+          height: 30em;
+          width: 25em;
+          background: #fff;
+          padding: 2em;
+          margin: 0;
+        "
+      >
+        <div class="street-plus__form-group">
+          <label
+            class="street-plus__form-label"
+            for="theme"
+          >テーマ</label>
+          <div style="
+            position:relative;
+            left: -.5em;
+            width:10em;
+          ">
+            <select
+              id="theme"
+              class="street-plus__form-select"
+              :class="$theme.input"
+              v-model="form.theme"
+              style="width: 10em"
+            >
+              <optgroup label="Official">
+                <option id="light">light</option>
+              </optgroup>
+              <optgroup label="Contributors">
+                <option id="blue0513">blur0513</option>
+              </optgroup>
+            </select>
+            <Octicon name="tasklist" scale="0.75" style="
+              position: absolute;
+              right: 1.75em;
+              bottom: 50%;
+              transform: translateY(50%);
+            "/>
+          </div>
+          <label
+            class="street-plus__form-label"
+            for="intervalMinute"
+          >各フィードの再読込間隔</label>
+          <input
+            id="intervalMinute"
+            type="number"
+            class="street-plus__form-input"
+            :class="$theme.input"
+            style="width: 4em"
+            v-model.trim="form.intervalMinute"
+          />
+          <label
+            class="street-plus__form-label"
+            for="accessToken"
+          >アクセストークン</label>
+          <input
+            id="accessToken"
+            class="street-plus__form-input"
+            :class="$theme.input"
+            v-model.trim="form.accessToken"
+          />
+        </div>
+      </div>
+    </section>
   </section>
 </template>
 
@@ -118,8 +201,10 @@ import tippy from 'tippy.js';
 import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/plus';
 import 'vue-octicon/icons/package';
+import 'vue-octicon/icons/gear';
 import 'vue-octicon/icons/tag';
 import 'vue-octicon/icons/search';
+import 'vue-octicon/icons/tasklist';
 import Street from '../records/street';
 import Card from './card';
 import {moveTo} from '@/helpers';
@@ -243,9 +328,33 @@ export default {
         this.form.search = '';
       },
     });
+
+    this.searchTip = tippy(this.$refs.configButton, {
+      html: this.$refs.configForm,
+      position: 'right-end',
+      trigger: 'click',
+      animation: 'shift',
+      theme: 'light',
+      interactive: true,
+      size: 'small',
+      // hideOnClick: true
+      // shown: () => {
+      //   this.$refs.searchInput.focus();
+      // },
+      // hidden: () => {
+      //   this.form.search = '';
+      // },
+    });
+
   }
 }
 </script>
+
+<style>
+.tippy-popper .tippy-tooltip.light-theme[data-animatefill] {
+  padding: 0;
+}
+</style>
 
 <style scoped>
   .street-plus__box {
@@ -324,8 +433,16 @@ export default {
     margin: 0 0 .34em .55em;
     font-weight: bold;
   }
+  .street-plus__form-label:not(:first-child) {
+    margin-top: 1.2em;
+  }
   .street-plus__form-input {
     padding: .34em .55em;
+  }
+  .street-plus__form-select {
+    padding: .34em .55em;
+    -webkit-appearance: none;
+    outline: none;
   }
   .street-plus__form-button {
     padding: .34em .55em;
