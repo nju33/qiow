@@ -96,7 +96,7 @@ async function runApp() {
 
   Vue.prototype.$themename = 'light';
   Vue.prototype.$theme = (() => {
-    const {classes} = themes.dark.attach();
+    const {classes} = themes.light.attach();
     return classes;
   })();
 
