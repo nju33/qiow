@@ -11,7 +11,11 @@ theme.get<template>
       ref="header"
     >
       <div class="header__left"></div>
-      <h3 :class="theme && theme.get('headerTitle')">{{street.title}}</h3>
+      <h3
+        class="header__title"
+        :class="theme && theme.get('headerTitle')"
+        v-text="theme ? street.title : ''"
+      />
       <div class="header__right">
         <button
           class="header__button" :class="theme && theme.get('headerButton')"
@@ -432,6 +436,9 @@ export default {
   .street__header {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
+  }
+  .header__title {
+    padding: .5em;
   }
   .header__right {
     display: flex;

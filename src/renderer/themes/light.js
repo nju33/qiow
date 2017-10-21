@@ -95,7 +95,6 @@ export default jss.createStyleSheet({
   },
   headerTitle: {
     textAlign: 'center',
-    padding: '.5em',
     color: '#000000',
   },
   headerButton: {
@@ -145,7 +144,7 @@ export default jss.createStyleSheet({
     border: '1px solid #565656',
     background: '#fefefe',
     color: 'rgb(0, 92, 175)',
-    
+
     '& .card__data': {
       color: 'rgba(0,0,0,.7)'
     }
