@@ -185,6 +185,7 @@
             ref="configAccessToken"
             class="street-plus__form-input"
             :class="theme && theme.get('input')"
+            v-model="token"
           />
         </div>
       </div>
@@ -292,6 +293,7 @@ export default {
     return {
       themename: this.state$.pluck('themename'),
       theme: this.state$.pluck('theme') ,
+      token: this.state$.pluck('token'),
       type: this.addStreet$
         .pluck('data')
         .pluck('type')
@@ -346,13 +348,23 @@ export default {
         return {
           type: 'THEME',
           fn: state => {
-            this.$parent.$forceUpdate();
             return state.updateTheme(ev.target.value);
           },
         };
       })
       .subscribe(this.state$);
 
+    Rx.Observable.fromEvent(this.$refs.configAccessToken, 'change')
+      .debounceTime(100)
+      .map(ev => {
+        return {
+          type: 'TOKEN',
+          fn: state => {
+            return state.setToken(ev.target.value);
+          },
+        };
+      })
+      .subscribe(this.state$);
   }
 }
 </script>
