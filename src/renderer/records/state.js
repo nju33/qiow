@@ -1,12 +1,18 @@
+import Vue from 'vue';
 import R from 'ramda';
 import {Record, Map, List} from 'immutable';
+import jss from 'jss';
 import Street from './street';
+import themes from '../themes';
 
 export default class State extends Record({
   _id: 0,
   type: null,
   route: 'list',
   token: null,
+  themename: 'light',
+  theme: Map(),
+  intervalMinute: 3,
   streets: List(),
   control: Map(),
   detail: null,
@@ -16,13 +22,14 @@ export default class State extends Record({
 }) {
   export() {
     const pick = R.pick([
-      'token',
       'type',
       'context',
       'width',
       'title'
     ]);
     return {
+      themename: this.themename,
+      intervalMinute: this.intervalMinute,
       userId: this.user && this.user.get('id'),
       streets: R.map(pick, this.streets.toArray())
     }
@@ -123,5 +130,21 @@ export default class State extends Record({
 
   setToken(token) {
     return this.set('token', token);
+  }
+
+  setIntervalMinute(min) {
+    return this.set('intervalMinute', min);
+  }
+
+  updateTheme(themename) {
+    const oldStyleSheet = themes[this.themename];
+    const nextStyleSheet = themes[themename];
+
+    jss.removeStyleSheet(oldStyleSheet);
+    const {classes: theme} = nextStyleSheet.attach();
+
+    return this
+      .set('themename', themename)
+      .set('theme', Map(theme));
   }
 }

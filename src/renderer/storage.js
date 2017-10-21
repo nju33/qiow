@@ -7,14 +7,6 @@ import {remote} from 'electron';
 
 const storage = pify(_storage);
 
-export async function loadConfig() {
-  const config = await storage.get('config');
-
-  if (Object.keys(config).length === 0) {
-    return {};
-  }
-  return config;
-}
 
 export async function loadData() {
   const data = await storage.get('data');

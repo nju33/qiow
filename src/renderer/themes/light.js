@@ -104,10 +104,15 @@ export default jss.createStyleSheet({
     }
   },
   input: {
+    background: '#fff',
     borderRadius: '2px',
     border: '1px solid #dcdcdc',
     transition: `.2s ${easing}`,
     '&:focus': {
+      border: `1px solid ${vars.color.accent}`,
+      boxShadow: `0 0 3px 0 ${vars.color.accent}`
+    },
+    '&:hover': {
       border: `1px solid ${vars.color.accent}`,
       boxShadow: `0 0 3px 0 ${vars.color.accent}`
     }

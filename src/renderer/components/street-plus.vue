@@ -1,31 +1,43 @@
 <template>
   <section
     class="street-plus__box"
-    :class="$theme.streetPlusBox"
+    :class="theme && theme.get('streetPlusBox')"
   >
     <div class="street-plus__group">
       <div
         class="street-plus__logo"
-        :class="$theme.streetPlusLogo"
+        :class="theme && theme.get('streetPlusLogo')"
       >
         <img class="street-plus__img" :src="logoUrl"/>
       </div>
       <!-- <button class="street-plus__button" v-stream:click="toggleStock$">
-        <Octicon name="package" scale="1.5" :class="$theme.streetPlusIcon"/>
+        <Octicon name="package" scale="1.5" :class="theme && theme.get('streetPlusIcon')"/>
       </button> -->
       <button ref="tagButton" class="street-plus__button">
-        <Octicon name="tag" scale="1.5" :class="$theme.streetPlusIcon"/>
+        <Octicon name="tag" scale="1.5" :class="theme && theme.get('streetPlusIcon')"/>
       </button>
       <button ref="searchButton" class="street-plus__button">
-        <Octicon name="search" scale="1.2" :class="$theme.streetPlusIcon"/>
+        <Octicon name="search" scale="1.2" :class="theme && theme.get('streetPlusIcon')"/>
       </button>
+    </div>
+
+    <div class="street-plus__group--bottom">
+      <button ref="configButton" class="street-plus__button">
+        <Octicon name="gear" scale="1.5" :class="theme && theme.get('streetPlusIcon')"/>
+      </button>
+      <!-- <div
+        class="street-plus__logo"
+        :class="theme && theme.get('streetPlusLogo')"
+      >
+        <img class="street-plus__img" :src="user && user.get('profileImageUrl')"/>
+      </div> -->
     </div>
 
     <!-- stockとか使いたくなったら実装 -->
     <!-- <div class="street-plus__group--bottom">
       <div
         class="street-plus__logo"
-        :class="$theme.streetPlusLogo"
+        :class="theme && theme.get('streetPlusLogo')"
       >
         <img class="street-plus__img" :src="user && user.get('profileImageUrl')"/>
       </div>
@@ -57,7 +69,7 @@
           >タグID</label>
           <input
             class="street-plus__form-input"
-            :class="$theme.input"
+            :class="theme && theme.get('input')"
             id="tagId"
             v-model.trim="form.tag"
           />
@@ -65,11 +77,12 @@
         <div class="street-plus__form-group">
           <button
             class="street-plus__form-button"
-            :class="$theme.accentButton"
+            :class="theme && theme.get('accentButton')"
             type="submit">追加</button>
         </div>
       </form>
     </section>
+
     <section
       ref="searchForm"
     >
@@ -96,7 +109,7 @@
           >検索</label>
           <input
             class="street-plus__form-input"
-            :class="$theme.input"
+            :class="theme && theme.get('input')"
             id="tagId"
             v-model.trim="form.search"
           />
@@ -104,24 +117,100 @@
         <div class="street-plus__form-group">
           <button
             class="street-plus__form-button"
-            :class="$theme.accentButton"
+            :class="theme && theme.get('accentButton')"
             type="submit">追加</button>
         </div>
       </form>
+    </section>
+
+    <section
+      ref="configForm"
+    >
+      <div
+        class="street-plus__form"
+        style="
+          height: 30em;
+          width: 25em;
+        "
+      >
+        <div class="street-plus__form-group">
+          <label
+            class="street-plus__form-label"
+            for="theme"
+          >テーマ</label>
+          <div style="
+            position:relative;
+            left: -.5em;
+            width:10em;
+          ">
+            <select
+              id="theme"
+              ref="configTheme"
+              class="street-plus__form-select"
+              :class="theme && theme.get('input')"
+              style="width: 10em"
+            >
+              <optgroup label="Official">
+                <option value="light" :selected="themename === 'light'">light</option>
+              </optgroup>
+              <optgroup label="Contributors">
+                <option value="blue0513" :selected="themename==='blur0513'">blur0513</option>
+              </optgroup>
+            </select>
+            <Octicon name="tasklist" scale="0.75" style="
+              position: absolute;
+              right: 1.75em;
+              bottom: 50%;
+              transform: translateY(50%);
+            "/>
+          </div>
+          <label
+            class="street-plus__form-label"
+            for="intervalMinute"
+          >各フィードの再読込間隔</label>
+          <input
+            id="intervalMinute"
+            ref="configIntervalMinute"
+            type="number"
+            class="street-plus__form-input"
+            :class="theme && theme.get('input')"
+            style="width: 4em"
+            min="1"
+            max="60"
+            v-model="intervalMinute"
+          />
+          <label
+            class="street-plus__form-label"
+            for="accessToken"
+          >アクセストークン</label>
+          <input
+            id="accessToken"
+            ref="configAccessToken"
+            class="street-plus__form-input"
+            :class="theme && theme.get('input')"
+            v-model="token"
+          />
+        </div>
+      </div>
     </section>
   </section>
 </template>
 
 <script>
+import Vue from 'vue';
 import Rx from 'rxjs/Rx';
+import jss from 'jss';
 import tippy from 'tippy.js';
 import Octicon from 'vue-octicon/components/Octicon';
 import 'vue-octicon/icons/plus';
 import 'vue-octicon/icons/package';
+import 'vue-octicon/icons/gear';
 import 'vue-octicon/icons/tag';
 import 'vue-octicon/icons/search';
+import 'vue-octicon/icons/tasklist';
 import Street from '../records/street';
 import Card from './card';
+import themes from '../themes';
 import {moveTo} from '@/helpers';
 
 export default {
@@ -154,7 +243,10 @@ export default {
       };
     }
   },
-  domStreams: ['toggleStock$', 'submit$'],
+  domStreams: [
+    'toggleStock$',
+    'submit$',
+  ],
   subscriptions() {
     this.addStreet$ = new Rx.BehaviorSubject({data: {type: 'button'}});
 
@@ -176,7 +268,6 @@ export default {
     this.submit$
       .do(({event}) => event.preventDefault())
       .pluck('data')
-
       // .flatMap(() => {
       //   return Rx.Observable
       //     .from(Object.values(this.formData))
@@ -199,21 +290,24 @@ export default {
             return state.addStreet(street);
           }
         }
-
-        // });
-        // setTimeout(() => {
-        //   this.addStreet$.next({data: {type: 'button'}});
-        // }, 0);
       })
       .subscribe(this.state$);
 
     return {
+      themename: this.state$.pluck('themename'),
+      theme: this.state$.pluck('theme') ,
+      token: this.state$.pluck('token'),
+      intervalMinute: this.state$.pluck('intervalMinute'),
       type: this.addStreet$
         .pluck('data')
         .pluck('type')
     };
   },
   mounted() {
+    this.state$.next({
+      fn: state => state.forceUpdate(),
+    });
+
     this.tagTip = tippy(this.$refs.tagButton, {
       html: this.$refs.tagForm,
       position: 'right-start',
@@ -243,9 +337,58 @@ export default {
         this.form.search = '';
       },
     });
+
+    this.searchTip = tippy(this.$refs.configButton, {
+      html: this.$refs.configForm,
+      position: 'right-end',
+      animation: 'shift',
+      theme: 'light',
+      interactive: true,
+      size: 'small',
+    });
+
+    Rx.Observable.fromEvent(this.$refs.configTheme, 'change')
+      .map(ev => {
+        return {
+          type: 'THEME',
+          fn: state => {
+            return state.updateTheme(ev.target.value);
+          },
+        };
+      })
+      .subscribe(this.state$);
+
+    Rx.Observable.fromEvent(this.$refs.configIntervalMinute, 'change')
+      .debounceTime(100)
+      .map(ev => {
+        return {
+          fn: state => {
+            return state.setIntervalMinute(ev.target.value);
+          },
+        };
+      })
+      .subscribe(this.state$);
+
+    Rx.Observable.fromEvent(this.$refs.configAccessToken, 'change')
+      .debounceTime(100)
+      .map(ev => {
+        return {
+          type: 'TOKEN',
+          fn: state => {
+            return state.setToken(ev.target.value);
+          },
+        };
+      })
+      .subscribe(this.state$);
   }
 }
 </script>
+
+<style>
+.tippy-popper .tippy-tooltip.light-theme[data-animatefill] {
+  padding: 0;
+}
+</style>
 
 <style scoped>
   .street-plus__box {
@@ -310,7 +453,9 @@ export default {
   .street-plus__form {
     width: 13em;
     height: 8em;
-    margin: .5em 0;
+    background: #fff;
+    padding: 1.5em 1em;
+    margin: 0;
   }
   .street-plus__form-group {
     margin: .5em 0;
@@ -324,8 +469,16 @@ export default {
     margin: 0 0 .34em .55em;
     font-weight: bold;
   }
+  .street-plus__form-label:not(:first-child) {
+    margin-top: 1.2em;
+  }
   .street-plus__form-input {
     padding: .34em .55em;
+  }
+  .street-plus__form-select {
+    padding: .34em .55em;
+    -webkit-appearance: none;
+    outline: none;
   }
   .street-plus__form-button {
     padding: .34em .55em;

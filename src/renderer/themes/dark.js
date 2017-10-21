@@ -4,9 +4,17 @@ import preset from 'jss-preset-default';
 const jss = create();
 jss.setup(preset());
 
+const vars = {
+  color: {
+    base: '#f222',
+  }
+};
+
 export default jss.createStyleSheet({
-  body: {
-    background: '#222',
-    color: '#f8f8f8'
+  '@global': {
+    body: {
+      background: vars.color.base,
+      color: '#ccc'
+    },
   }
 });
