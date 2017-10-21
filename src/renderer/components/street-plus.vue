@@ -154,7 +154,7 @@
                 <option value="light" :selected="themename === 'light'">light</option>
               </optgroup>
               <optgroup label="Contributors">
-                <option value="blue0513" :selected="themename==='blue0513'">blur0513</option>
+                <option value="blue0513" :selected="themename==='blue0513'">blue0513</option>
               </optgroup>
             </select>
             <Octicon name="tasklist" scale="0.75" style="
