@@ -131,9 +131,6 @@
         style="
           height: 30em;
           width: 25em;
-          background: #fff;
-          padding: 2em;
-          margin: 0;
         "
       >
         <div class="street-plus__form-group">
@@ -351,18 +348,10 @@ export default {
     this.searchTip = tippy(this.$refs.configButton, {
       html: this.$refs.configForm,
       position: 'right-end',
-      trigger: 'click',
       animation: 'shift',
       theme: 'light',
       interactive: true,
       size: 'small',
-      // hideOnClick: true
-      // shown: () => {
-      //   this.$refs.searchInput.focus();
-      // },
-      // hidden: () => {
-      //   this.form.search = '';
-      // },
     });
 
     Rx.Observable.fromEvent(this.$refs.configTheme, 'change')
@@ -450,7 +439,9 @@ export default {
   .street-plus__form {
     width: 13em;
     height: 8em;
-    margin: .5em 0;
+    background: #fff;
+    padding: 1.5em 1em;
+    margin: 0;
   }
   .street-plus__form-group {
     margin: .5em 0;
