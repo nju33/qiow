@@ -149,11 +149,9 @@
               class="street-plus__form-select"
               :class="theme && theme.get('input')"
               style="width: 10em"
-              v-stream:change="changeConfigTheme$"
             >
               <optgroup label="Official">
                 <option value="light" :selected="themename === 'light'">light</option>
-                <option value="dark" :selected="themename === 'dark'">dark</option>
               </optgroup>
               <optgroup label="Contributors">
                 <option value="blue0513" :selected="themename==='blur0513'">blur0513</option>
@@ -177,7 +175,6 @@
             class="street-plus__form-input"
             :class="theme && theme.get('input')"
             style="width: 4em"
-            v-stream:change="changeConfigIntervalMinute$"
           />
           <label
             class="street-plus__form-label"
@@ -188,7 +185,6 @@
             ref="configAccessToken"
             class="street-plus__form-input"
             :class="theme && theme.get('input')"
-            v-stream:change="changeConfigAccessToken$"
           />
         </div>
       </div>
@@ -246,9 +242,6 @@ export default {
   domStreams: [
     'toggleStock$',
     'submit$',
-    'changeConfigTheme$',
-    'changeConfigIntervalMinute$',
-    'changeConfigAccessToken$',
   ],
   subscriptions() {
     this.addStreet$ = new Rx.BehaviorSubject({data: {type: 'button'}});
@@ -267,12 +260,6 @@ export default {
           fn: state => state.addStreet(street)
         })
       });
-
-    this.changeConfigTheme$
-      // .do(function() {console.log(arguments)})
-      .map(_ => {
-        console.log(_)
-      })
 
     this.submit$
       .do(({event}) => event.preventDefault())
