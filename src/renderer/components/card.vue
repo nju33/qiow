@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="card__box" :class="$theme.card">
+    <section class="card__box" :class="theme && theme.get('card')">
       <div class="card__title">
         <a
           class="title"
@@ -48,6 +48,7 @@ export default {
     UserTooltip
   },
   props: {
+    theme: Object,
     item: {
       type: Object,
       required: true
@@ -91,8 +92,7 @@ export default {
       })
       .subscribe(this.state$);
 
-    return {
-    };
+    return {};
   },
   filters: {
     timeago(date) {

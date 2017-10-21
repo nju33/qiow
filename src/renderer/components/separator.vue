@@ -1,7 +1,7 @@
 <template>
   <div
     class="separator"
-    :class="$theme.separator"
+    :class="theme && theme.get('separator')"
     @mousedown="handleMousedown"
   />
 </template>
@@ -75,6 +75,11 @@ export default {
         // prevElem.style.maxWidth = prevElemWidth + movement + 'px';
       // }
     },
+  },
+  subscriptions() {
+    return {
+      theme: this.state$.pluck('theme') ,
+    };
   },
   mounted() {
     document.body.addEventListener('mousemove', this.handleMousemove);

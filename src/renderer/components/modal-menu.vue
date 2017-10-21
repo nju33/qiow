@@ -8,12 +8,12 @@
           v-if="idx === 0"
           v-on:click="open(url)"
           class="breadclumb__item"
-          :class="idx === 0 && $theme.breadclumbItemFirst"
+          :class="idx === 0 && theme && theme.get('breadclumbItemFirst')"
         >{{item}}</li>
         <li
           v-else
           class="breadclumb__item"
-          :class="idx === 0 && $theme.breadclumbItemFirst"
+          :class="idx === 0 && theme && theme.get('breadclumbItemFirst')"
         >{{item}}</li>
 
         <span class="breadclumb__separator" v-if="idx < breadclumb.length - 1">
@@ -50,10 +50,20 @@ export default {
       required: true
     }
   },
+  subscriptions() {
+    return {
+      theme: this.state$.pluck('theme'),
+    };
+  },
   methods: {
     open(url) {
       this.$electron.shell.openExternal(url);
     }
+  },
+  mounted() {
+    this.state$.next({
+      fn: state => state.forceUpdate(),
+    });
   }
 }
 </script>

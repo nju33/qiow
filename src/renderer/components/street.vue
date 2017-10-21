@@ -1,4 +1,4 @@
-<template>
+theme.get<template>
   <section
     class="street__box"
     :style="{
@@ -11,10 +11,10 @@
       ref="header"
     >
       <div class="header__left"></div>
-      <h3 :class="$theme.headerTitle">{{street.title}}</h3>
+      <h3 :class="theme && theme.get('headerTitle')">{{street.title}}</h3>
       <div class="header__right">
         <button
-          class="header__button" :class="$theme.headerButton"
+          class="header__button" :class="theme && theme.get('headerButton')"
           v-stream:click="delete$"
         >
           <Octicon name="x"/>
@@ -41,7 +41,7 @@
             v-for="item in items"
             :key="item.id"
             class="item">
-            <Card :item="item"/>
+            <Card :theme="theme" :item="item"/>
           </li>
           <li
             :key="'loading'">
@@ -284,10 +284,12 @@ export default {
     (() => {
       const intervalSubject$ = new Rx.Subject();
 
+      console.log(this.intervalMinute, 'aslkdjfalsdf');
+
       const interval$ = new Rx.Observable(observer => {
         let tid = null;
         /**
-         * 5分に一度データを取得する
+         * 3分に一度データを取得する
          */
         const reserveLoad = () => {
           return setTimeout(() => {
@@ -298,7 +300,7 @@ export default {
             });
             observer.next();
             tid = reserveLoad();
-          }, 50000);
+          }, 1000 * 60 * (this.intervalMinute || 3));
         }
 
         tid = reserveLoad();
@@ -356,6 +358,8 @@ export default {
     })();
 
     return {
+      theme: this.state$.pluck('theme'),
+      intervalMinute: this.state$.pluck('intervalMinute'),
       items: source$,
     };
   },

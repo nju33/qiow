@@ -3,14 +3,14 @@
     <section class="qiita-contents__center">
       <h1
         class="qiita-contents__title"
-        :class="{[$theme.title]: true}"
+        :class="{[theme && theme.get('title')]: true}"
         v-text="title"
       />
       <div ref="contents" id="qC" v-html="transformedContents"/>
       <Comment :items="comments"/>
     </section>
     <!-- <div class="qiita-action">
-      <button class="qiita-action__button" :class="$theme.qiitaActionButton">
+      <button class="qiita-action__button" :class="theme && theme.get('qiitaActionButton')">
         <Octicon name="package" scale="1.3"/>
       </button>
     </div> -->
@@ -79,6 +79,11 @@ export default {
     getHeadlineLevel(headline) {
       return Number(headline.tagName.match(/\d$/)[0]);
     }
+  },
+  subscriptions() {
+    return {
+      theme: this.state$.pluck('theme') ,
+    };
   },
   mounted() {
     const headlineIOSource$ = new Rx.Subject()

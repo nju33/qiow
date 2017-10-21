@@ -2,7 +2,7 @@
   <div class="loading">
     <transition name="loading__inner">
       <div class="loading__inner" v-if="loading">
-        <svg class="loading__icon" :class="$theme.loadingIcon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+        <svg class="loading__icon" :class="theme && theme.get('loadingIcon')" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
           <rect x="0" y="0" width="4" height="20">
             <animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0s" dur="0.6s" repeatCount="indefinite"></animate>
           </rect>
@@ -26,7 +26,12 @@ export default {
       required: true,
       type: Boolean
     }
-  }
+  },
+  subscriptions() {
+    return {
+      theme: this.state$.pluck('theme') ,
+    };
+  },
 }
 </script>
 
