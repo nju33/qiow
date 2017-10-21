@@ -14,8 +14,6 @@ import {
   saveData,
   loadToken,
   saveToken,
-  // loadTheme,
-  // saveTheme,
 } from './storage';
 import State from './records/state';
 import Street from './records/street';
@@ -30,13 +28,6 @@ runApp();
 async function runApp() {
   const token = await loadToken();
   // const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
-  // const themename = await loadTheme();
-  // Vue.prototype.$themename = themename;
-  // Vue.prototype.$theme = (() => {
-  //   console.log(Vue.prototype.$themename)
-  //   const {classes} = themes[Vue.prototype.$themename].attach();
-  //   return classes;
-  // })();
 
   if (token !== undefined) {
     Vue.http = Vue.prototype.$http = axios.create({
@@ -57,10 +48,6 @@ async function runApp() {
         if (type === 'TOKEN') {
           saveToken(nextState.token);
         }
-        // else if (type === 'THEME') {
-        //   console.log(nextState.toJS())
-        //   saveTheme(nextState.theme);
-        // }
         return nextState;
       } catch (err) {
         console.error(err)
@@ -113,12 +100,7 @@ async function runApp() {
 
   Vue.use(VueRx, Rx);
   Vue.use(VueLazyload);
-  // console.log('a', token)
   new Vue({
-    // data() {
-    //   console.log({token});
-    //   return {token};
-    // },
     components: {App},
     router,
     // store,

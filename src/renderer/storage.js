@@ -38,17 +38,3 @@ export async function saveToken(token) {
     throw new Error(err);
   }
 }
-
-export async function loadTheme() {
-  const {theme} = await storage.get('theme');
-  return theme || 'light';
-}
-
-export async function saveTheme(theme) {
-  console.log('00000', theme)
-  try {
-    await storage.set('theme', {theme});
-  } catch (err) {
-    throw new Error(err);
-  }
-}
