@@ -4,7 +4,6 @@
       <div class="card__title">
         <a
           class="title"
-          style="color:#005CAF"
           v-stream:click="{
             subject: showDetail$,
             data: item
@@ -13,7 +12,7 @@
       </div>
       <div class="card__data">
         <ul class="card__tags">
-          <li class="card__tag" v-for="tag in item.tags" v-stream:click="{
+          <li :class="$theme.cardTag" v-for="tag in item.tags" v-stream:click="{
             subject: addStreet$,
             data: tag
           }">
@@ -135,6 +134,7 @@ export default {
     line-height: 15px;
     border-radius: 10px;
     cursor: pointer;
+    color: #000000;
   }
   .card__tag:first-child {
     margin-left: 0;

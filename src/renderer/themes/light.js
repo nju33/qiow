@@ -85,10 +85,21 @@ export default jss.createStyleSheet({
     background: '#565656',
     border: `1px dotted ${vars.color.accent}`
   },
+  placeholderText: {
+    color: 'black',
+  },
   placeholderIcon: {
     background: '#565656',
     border: `3px solid ${vars.color.accentSub}`,
     fill: '#fff !important',
+  },
+  headerTitle: {
+    textAlign: 'center',
+    padding: '.5em',
+    color: '#000000',
+  },
+  headerButton: {
+    color: '#000000'
   },
   streetPlusBox: {
     background: '#565656',
@@ -128,7 +139,8 @@ export default jss.createStyleSheet({
   card: {
     border: '1px solid #565656',
     background: '#fefefe',
-
+    color: 'rgb(0, 92, 175)',
+    
     '& .card__data': {
       color: 'rgba(0,0,0,.7)'
     }
