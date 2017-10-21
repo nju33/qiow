@@ -16,11 +16,11 @@ const easing = 'cubic-bezier(0.215, 0.61, 0.355, 1)';
  */
 const vars = {
   color: {
-    base: '#f5f5f5',
+    base: '#282c34',
     sub: '#1b1b1b',
     link: '#2b6cc4',
     accent: '#2bc483',
-    accentSub: '#229a67'
+    accentSub: '#ffffff'
   }
 };
 
@@ -63,6 +63,8 @@ export default jss.createStyleSheet({
     }
   },
   body: {
+    background: '#222',
+    color: '#f8f8f8'
   },
   title: {
     color: vars.color.accent
@@ -82,11 +84,10 @@ export default jss.createStyleSheet({
   separator: {
     // background: vars.color.accent,
     // border: `1px dotted #565656`
-    background: '#565656',
-    border: `1px dotted ${vars.color.accent}`
+    background: '#000000',
   },
   placeholderText: {
-    color: 'black',
+    color: 'white',
   },
   placeholderIcon: {
     background: '#565656',
@@ -96,14 +97,13 @@ export default jss.createStyleSheet({
   headerTitle: {
     textAlign: 'center',
     padding: '.5em',
-    color: '#000000',
+    color: '#ffffff',
   },
   headerButton: {
-    color: '#000000'
+    color: '#ffffff'
   },
   streetPlusBox: {
-    background: '#565656',
-    // background: vars.color.accent,
+    background: vars.color.base,
     borderRight: `3px solid ${vars.color.accentSub}`
   },
   streetPlusLogo: {
@@ -115,15 +115,10 @@ export default jss.createStyleSheet({
     }
   },
   input: {
-    background: '#fff',
     borderRadius: '2px',
     border: '1px solid #dcdcdc',
     transition: `.2s ${easing}`,
     '&:focus': {
-      border: `1px solid ${vars.color.accent}`,
-      boxShadow: `0 0 3px 0 ${vars.color.accent}`
-    },
-    '&:hover': {
       border: `1px solid ${vars.color.accent}`,
       boxShadow: `0 0 3px 0 ${vars.color.accent}`
     }
@@ -142,12 +137,12 @@ export default jss.createStyleSheet({
     }
   },
   card: {
-    border: '1px solid #565656',
-    background: '#fefefe',
-    color: 'rgb(0, 92, 175)',
+    border: '1px solid #818896',
+    background: '#282c34',
+    color: 'rgb(255,255,255)',
     
     '& .card__data': {
-      color: 'rgba(0,0,0,.7)'
+      color: 'rgba(255,255,255,.7)'
     }
   },
   loadingIcon: {

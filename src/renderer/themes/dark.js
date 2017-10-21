@@ -16,5 +16,8 @@ export default jss.createStyleSheet({
       background: vars.color.base,
       color: '#ccc'
     },
-  }
+  },
+  placeholderText: {
+    color: 'white',
+  },
 });

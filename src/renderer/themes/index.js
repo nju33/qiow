@@ -1,7 +1,7 @@
-import dark from './dark';
 import light from './light';
+import blue0513 from './blue0513';
 
 export default {
-  dark,
-  light
+  light,
+  blue0513,
 };
