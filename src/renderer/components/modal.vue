@@ -61,9 +61,9 @@ export default {
     });
 
     this.close$ = new Rx.Subject()
-      // .do(({event}) => {
-      //   event.stopPropagation();
-      // })
+      .do(() => {
+        this.headlineStack = [];
+      })
       .map(() => ({
         type: this.close$,
         fn: state => state.goList()
