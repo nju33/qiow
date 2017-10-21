@@ -1,14 +1,14 @@
 <template>
-  <aside class="user-board__box" :class="$theme.userBoard">
+  <aside class="user-board__box" :class="$theme && theme.get('userBoard')">
     <div class="user-board__user">
       <img
         class="user-board__user-img"
-        :class="$theme.userBoardImg"
+        :class="$theme && theme.get('userBoardImg')"
         :src="profileImageUrl"
       />
       <h2
         class="user-board__user-name"
-        :class="$theme.userBoardName"
+        :class="$theme && theme.get('userBoardName')"
       >{{name}}</h2>
     </div>
   </aside>

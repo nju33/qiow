@@ -7,14 +7,6 @@ import {remote} from 'electron';
 
 const storage = pify(_storage);
 
-export async function loadConfig() {
-  const config = await storage.get('config');
-
-  if (Object.keys(config).length === 0) {
-    return {};
-  }
-  return config;
-}
 
 export async function loadData() {
   const data = await storage.get('data');
@@ -42,6 +34,20 @@ export async function loadToken() {
 export async function saveToken(token) {
   try {
     await storage.set('token', {token});
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+export async function loadTheme() {
+  const {theme} = await storage.get('theme');
+  return theme || 'light';
+}
+
+export async function saveTheme(theme) {
+  console.log('00000', theme)
+  try {
+    await storage.set('theme', {theme});
   } catch (err) {
     throw new Error(err);
   }

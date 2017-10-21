@@ -41,7 +41,7 @@
             v-for="item in items"
             :key="item.id"
             class="item">
-            <Card :item="item"/>
+            <Card :theme="theme" :item="item"/>
           </li>
           <li
             :key="'loading'">
@@ -356,6 +356,7 @@ export default {
     })();
 
     return {
+      theme: this.state$.pluck('theme'),
       items: source$,
     };
   },

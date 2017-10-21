@@ -9,7 +9,14 @@ import axios from 'axios';
 import App from './App';
 import router from './router';
 import store from './store';
-import {loadData, saveData, loadToken, saveToken} from './storage';
+import {
+  loadData,
+  saveData,
+  loadToken,
+  saveToken,
+  // loadTheme,
+  // saveTheme,
+} from './storage';
 import State from './records/state';
 import Street from './records/street';
 import themes from './themes';
@@ -23,6 +30,14 @@ runApp();
 async function runApp() {
   const token = await loadToken();
   // const token = 'f7856900d72be64a29742bf5fc278ba11ad8ac2c';
+  // const themename = await loadTheme();
+  // Vue.prototype.$themename = themename;
+  // Vue.prototype.$theme = (() => {
+  //   console.log(Vue.prototype.$themename)
+  //   const {classes} = themes[Vue.prototype.$themename].attach();
+  //   return classes;
+  // })();
+
   if (token !== undefined) {
     Vue.http = Vue.prototype.$http = axios.create({
       headers: {
@@ -42,14 +57,16 @@ async function runApp() {
         if (type === 'TOKEN') {
           saveToken(nextState.token);
         }
+        // else if (type === 'THEME') {
+        //   console.log(nextState.toJS())
+        //   saveTheme(nextState.theme);
+        // }
         return nextState;
       } catch (err) {
         console.error(err)
         return state;
       }
-    }, new State({
-      token,
-    }))
+    }, new State({token}))
     .pairwise()
     .switchMap(([prevState, state]) => {
       if (prevState === state) {
@@ -94,15 +111,14 @@ async function runApp() {
 
   init(Vue);
 
-  Vue.prototype.$themename = 'light';
-  Vue.prototype.$theme = (() => {
-    const {classes} = themes.light.attach();
-    return classes;
-  })();
-
   Vue.use(VueRx, Rx);
   Vue.use(VueLazyload);
+  // console.log('a', token)
   new Vue({
+    // data() {
+    //   console.log({token});
+    //   return {token};
+    // },
     components: {App},
     router,
     // store,

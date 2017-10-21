@@ -5,8 +5,8 @@
       <form class="user-form" v-stream:submit="setToken$">
         <div class="user-form-inner" style="position:relative;padding-top:8em">
           <img src="static/logo.svg" style="width: 120px;position:absolute;top:-6em;right:48%;transform:translateX(50%)"/>
-          <label class="user-label"><div style="margin-left: 10px;margin-bottom: 5px;">AccessToken:</div><input class="user-input" :class="$theme.input" style="width: 400px"/></label>
-          <button class="user-submit" type="submit" :class="$theme.accentButton">Done</button>
+          <label class="user-label"><div style="margin-left: 10px;margin-bottom: 5px;">AccessToken:</div><input class="user-input" :class="theme && theme.get('input')" style="width: 400px"/></label>
+          <button class="user-submit" type="submit" :class="theme && theme.get('accentButton')">Done</button>
         </div>
       </form>
     </template>
@@ -19,8 +19,8 @@
 
       <!-- <form v-if="!user" class="user-form" v-stream:submit="submit$">
         <div class="user-form-inner">
-          <label class="user-label">User ID: <input class="user-input" :class="$theme.input" /></label>
-          <button class="user-submit" type="submit" :class="$theme.accentButton">Done</button>
+          <label class="user-label">User ID: <input class="user-input" :class="theme && theme.get('input')" /></label>
+          <button class="user-submit" type="submit" :class="theme && theme.get('accentButton')">Done</button>
         </div>
       </form> -->
 
@@ -31,7 +31,7 @@
         <div class="placeholder__inner">
           <div class="placeholder__content--first">
             右にある
-            <Octicon name="tag" scale="1.3" :class="$theme.placeholderIcon"/>や<Octicon name="search" scale="1.3" :class="$theme.placeholderIcon"/>
+            <Octicon name="tag" scale="1.3" :class="theme && theme.get('placeholderIcon')"/>や<Octicon name="search" scale="1.3" :class="theme && theme.get('placeholderIcon')"/>
           </div>
           <div>から興味のあるタグやテキストを追加できます。</div>
         </div>
@@ -66,9 +66,9 @@ import camelcaseKeys from 'camelcase-keys';
 // import {getTagItemsUrl} from '@/helpers';
 
 export default {
-  props: {
-    themes: Object
-  },
+  // props: {
+  //   token: String,
+  // },
   name: 'board',
   components: {
     Octicon,
@@ -132,12 +132,11 @@ export default {
         }
       );
 
-    // setTimeout(() => {
-      // console.log(9)
     this.state$.next({
-      fn: state => state.forceUpdate(),
+      fn: state => {
+        return state.forceUpdate();
+      }
     });
-    // }, 0)
 
     return {
       // user: this.state$.pluck('user'),
@@ -150,10 +149,9 @@ export default {
         .map(streets => streets.reduce((acc, street) => {
           acc += street.width;
           return acc;
-        }, 0))
+        }, 0)),
+      theme: this.state$.pluck('theme') ,
     }
-  },
-  methods: {
   },
   mounted() {
     setTimeout(() => {
