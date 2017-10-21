@@ -56,6 +56,11 @@ export default jss.createStyleSheet({
     '#qC table th, $qC table td, #qCo table th, #qCo table td': {
       border: '1px solid #282c34'
     },
+    '#qC code': {
+      background: vars.color.base,
+      padding: '.1em .5em',
+      borderRadius: '3px',
+    },
     ':root:root #qC hr, :root:root #qCo hr': {
       opacity: .15,
       border: 'none',
