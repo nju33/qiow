@@ -47,6 +47,8 @@ export default (Vue) => {
     const {classes: theme} = themes[data.themename || 'light'].attach();
     data.theme = theme;
 
+    data.intervalMinute = data.intervalMinute || 3;
+
     if (data && ({}).hasOwnProperty.call(data, 'userId')) {
       delete data.userId;
     }

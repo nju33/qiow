@@ -12,6 +12,7 @@ export default class State extends Record({
   token: null,
   themename: 'light',
   theme: Map(),
+  intervalMinute: 3,
   streets: List(),
   control: Map(),
   detail: null,
@@ -28,6 +29,7 @@ export default class State extends Record({
     ]);
     return {
       themename: this.themename,
+      intervalMinute: this.intervalMinute,
       userId: this.user && this.user.get('id'),
       streets: R.map(pick, this.streets.toArray())
     }
@@ -128,6 +130,10 @@ export default class State extends Record({
 
   setToken(token) {
     return this.set('token', token);
+  }
+
+  setIntervalMinute(min) {
+    return this.set('intervalMinute', min);
   }
 
   updateTheme(themename) {

@@ -284,6 +284,8 @@ export default {
     (() => {
       const intervalSubject$ = new Rx.Subject();
 
+      console.log(this.intervalMinute, 'aslkdjfalsdf');
+
       const interval$ = new Rx.Observable(observer => {
         let tid = null;
         /**
@@ -298,7 +300,7 @@ export default {
             });
             observer.next();
             tid = reserveLoad();
-          }, 1000 * 60 * 3);
+          }, 1000 * 60 * (this.intervalMinute || 3));
         }
 
         tid = reserveLoad();
@@ -357,6 +359,7 @@ export default {
 
     return {
       theme: this.state$.pluck('theme'),
+      intervalMinute: this.state$.pluck('intervalMinute'),
       items: source$,
     };
   },

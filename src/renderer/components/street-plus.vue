@@ -175,6 +175,9 @@
             class="street-plus__form-input"
             :class="theme && theme.get('input')"
             style="width: 4em"
+            min="1"
+            max="60"
+            v-model="intervalMinute"
           />
           <label
             class="street-plus__form-label"
@@ -294,6 +297,7 @@ export default {
       themename: this.state$.pluck('themename'),
       theme: this.state$.pluck('theme') ,
       token: this.state$.pluck('token'),
+      intervalMinute: this.state$.pluck('intervalMinute'),
       type: this.addStreet$
         .pluck('data')
         .pluck('type')
@@ -349,6 +353,17 @@ export default {
           type: 'THEME',
           fn: state => {
             return state.updateTheme(ev.target.value);
+          },
+        };
+      })
+      .subscribe(this.state$);
+
+    Rx.Observable.fromEvent(this.$refs.configIntervalMinute, 'change')
+      .debounceTime(100)
+      .map(ev => {
+        return {
+          fn: state => {
+            return state.setIntervalMinute(ev.target.value);
           },
         };
       })
