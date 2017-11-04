@@ -12,7 +12,7 @@
       </div>
       <div class="card__data">
         <ul class="card__tags">
-          <li class="card__tag" v-for="tag in item.tags" v-stream:click="{
+          <li :class="theme && theme.get('cardTag')" v-for="tag in item.tags" v-stream:click="{
             subject: addStreet$,
             data: tag
           }">
