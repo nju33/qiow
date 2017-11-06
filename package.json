@@ -60,7 +60,7 @@
     "electron-json-storage": "^3.0.5",
     "escape-html": "^1.0.3",
     "highlightjs": "^9.10.0",
-    "immutable": "^3.8.1",
+    "immutable": "^3.8.2",
     "intersection-observer": "^0.3.2",
     "jss": "^7.1.5",
     "jss-preset-default": "^2.0.0",
