@@ -81,7 +81,7 @@
     "vue-lazyload": "^1.0.5",
     "vue-octicon": "^2.1.1",
     "vue-prdiv": "^0.1.0",
-    "vue-router": "^2.5.3",
+    "vue-router": "^3.0.1",
     "vue-rx": "^3.2.0",
     "vuex": "^2.3.1",
     "zenscroll": "^4.0.0"
