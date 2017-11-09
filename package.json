@@ -82,7 +82,7 @@
     "vue-octicon": "^2.1.1",
     "vue-prdiv": "^0.1.0",
     "vue-router": "^2.5.3",
-    "vue-rx": "^3.2.0",
+    "vue-rx": "^5.0.0",
     "vuex": "^2.3.1",
     "zenscroll": "^4.0.0"
   },

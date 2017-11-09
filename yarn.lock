@@ -6832,9 +6832,9 @@ vue-router@^2.5.3:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.5.3.tgz#073783f564b6aece6c8a59c63e298dc2aabfb51b"
 
-vue-rx@^3.2.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/vue-rx/-/vue-rx-3.4.0.tgz#996c3dcb42356b064a40816241fb96f94ec1fa77"
+vue-rx@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/vue-rx/-/vue-rx-5.0.0.tgz#71ed02e68c5e04db9d3cb765f4454b619a75c32d"
 
 vue-style-loader@^3.0.0, vue-style-loader@^3.0.1:
   version "3.0.1"
