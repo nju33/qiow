@@ -154,6 +154,10 @@ export default jss.createStyleSheet({
       color: 'rgba(0,0,0,.7)'
     }
   },
+  cardTag: {
+    background: '#e3e3e3',
+    color: '#000000',
+  },
   loadingIcon: {
     fill: vars.color.accent
   },
