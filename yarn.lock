@@ -3681,9 +3681,13 @@ is-glob@^3.1.0:
   dependencies:
     is-extglob "^2.1.0"
 
-is-in-browser@1.0.2, is-in-browser@^1.0.2:
+is-in-browser@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/is-in-browser/-/is-in-browser-1.0.2.tgz#f688bea8f1e5aadc3244ebc870d188cfb9b613cf"
+
+is-in-browser@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/is-in-browser/-/is-in-browser-1.1.3.tgz#56ff4db683a078c6082eb95dad7dc62e1d04f835"
 
 is-lower-case@^1.1.0:
   version "1.1.3"
@@ -4036,12 +4040,13 @@ jss-vendor-prefixer@^5.0.0:
   dependencies:
     css-vendor "^0.3.8"
 
-jss@^7.1.5:
-  version "7.1.5"
-  resolved "https://registry.yarnpkg.com/jss/-/jss-7.1.5.tgz#7d27b07b0f2f7f1a2ec9fe0ee1e2ab3f9d903de5"
+jss@^9.3.2:
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/jss/-/jss-9.3.2.tgz#12c997cd2af54f8836dbd19884a0c021583fbe2d"
   dependencies:
-    is-in-browser "1.0.2"
-    warning "3.0.0"
+    is-in-browser "^1.1.3"
+    symbol-observable "^1.0.4"
+    warning "^3.0.0"
 
 jump.js@^1.0.2:
   version "1.0.2"
@@ -6862,7 +6867,7 @@ vuex@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-2.3.1.tgz#cde8e997c1f9957719bc7dea154f9aa691d981a6"
 
-warning@3.0.0, warning@^3.0.0:
+warning@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
   dependencies:
