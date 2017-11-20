@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
-    "camelcase-keys": "^4.1.0",
+    "camelcase-keys": "^4.2.0",
     "cheerio": "^1.0.0-rc.1",
     "electron-json-storage": "^3.0.5",
     "escape-html": "^1.0.3",
