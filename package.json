@@ -76,7 +76,7 @@
     "snakecase-keys": "^1.1.0",
     "timeago.js": "^3.0.2",
     "tippy.js": "^1.0.0",
-    "vue": "^2.3.3",
+    "vue": "^2.5.13",
     "vue-electron": "^1.0.6",
     "vue-lazyload": "^1.0.5",
     "vue-octicon": "^2.1.1",
