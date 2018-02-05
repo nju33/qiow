@@ -69,7 +69,7 @@
     "moveto": "^1.6.1",
     "pify": "^3.0.0",
     "prettier": "^1.5.2",
-    "query-string": "^4.3.4",
+    "query-string": "^5.1.0",
     "ramda": "^0.24.1",
     "rxjs": "^5.4.0",
     "smoothscroll-polyfill": "^0.3.5",
