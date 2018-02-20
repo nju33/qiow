@@ -73,7 +73,7 @@
     "ramda": "^0.24.1",
     "rxjs": "^5.4.0",
     "smoothscroll-polyfill": "^0.3.5",
-    "snakecase-keys": "^1.1.0",
+    "snakecase-keys": "^1.1.1",
     "timeago.js": "^3.0.2",
     "tippy.js": "^1.0.0",
     "vue": "^2.3.3",
