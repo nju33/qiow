@@ -121,7 +121,7 @@
     "vue-template-compiler": "^2.3.3",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
-    "webpack-hot-middleware": "^2.18.0"
+    "webpack-hot-middleware": "^2.21.1"
   },
   "ava": {
     "require": [
