@@ -84,7 +84,7 @@
     "vue-router": "^2.5.3",
     "vue-rx": "^3.2.0",
     "vuex": "^2.3.1",
-    "zenscroll": "^4.0.0"
+    "zenscroll": "^4.0.2"
   },
   "devDependencies": {
     "ava": "^0.19.1",
