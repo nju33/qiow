@@ -5157,9 +5157,9 @@ plur@^2.0.0:
   dependencies:
     irregular-plurals "^1.0.0"
 
-popper.js@^1.10.2:
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.10.2.tgz#3d2d7788e1d85286051633dac6d23554134e4a04"
+popper.js@^1.14.3:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.3.tgz#1438f98d046acf7b4d78cd502bf418ac64d4f095"
 
 portfinder@^1.0.9:
   version "1.0.13"
@@ -6486,11 +6486,11 @@ timers-browserify@^2.0.2:
   dependencies:
     setimmediate "^1.0.4"
 
-tippy.js@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-1.0.0.tgz#17090bac71ea990c3c0e3f89d80ebe62b3fc92ed"
+tippy.js@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-2.5.2.tgz#01de112a80219032a3cf06ac2d29a4d69480705d"
   dependencies:
-    popper.js "^1.10.2"
+    popper.js "^1.14.3"
 
 title-case@^2.1.0:
   version "2.1.1"
