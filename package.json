@@ -57,7 +57,7 @@
     "axios": "^0.16.1",
     "camelcase-keys": "^4.1.0",
     "cheerio": "^1.0.0-rc.1",
-    "electron-json-storage": "^3.0.5",
+    "electron-json-storage": "^4.1.0",
     "escape-html": "^1.0.3",
     "highlightjs": "^9.10.0",
     "immutable": "^3.8.2",
